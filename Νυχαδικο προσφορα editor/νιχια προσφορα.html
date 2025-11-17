@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Προσφορά Τρίτης</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #2c3e1f 0%, #4a5f3a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 1/1.414;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 35px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(218,165,32,0.08) 0%, transparent 70%);
+        }
+        
+        .content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+			margin-top: 130px;
+        }
+        
+        .logo-container {
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            width: 100%;
+            max-width: 350px;
+            max-height: 120px;
+            margin: 0 auto;
+            display: none;
+            object-fit: contain;
+        }
+        
+        .logo.visible {
+            display: block;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #d4af37 0%, #daa520 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        
+        #logoInput {
+            display: none;
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: #d4af37;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 28px;
+            color: #daa520;
+            font-weight: 600;
+            letter-spacing: 3px;
+        }
+        
+        .offers {
+            margin: 20px 0;
+        }
+        
+        .offer-box {
+            background: linear-gradient(135deg, #f5f5dc 0%, #fafae8 100%);
+            border-radius: 15px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            border: 3px solid #d4af37;
+            transition: transform 0.3s ease;
+        }
+        
+        .offer-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        .offer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .offer-left {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .offer-title {
+            font-size: 30px;
+            color: #333;
+            line-height: 1.6;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .plus-sign {
+            font-size: 60px;
+            color: #d4af37;
+            font-weight: 700;
+            
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .price {
+            font-size: 65px;
+            color: #d4af37;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+        
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 2px dashed #d4af37;
+        }
+        
+        .note {
+            font-size: 25px;
+            color: #555;
+            margin-bottom: 12px;
+            font-style: italic;
+            font-weight: 500;
+        }
+        
+        .phone {
+            font-size: 30px;
+            color: #d4af37;
+            font-weight: 700;
+            margin-top: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .phone-icon {
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+                aspect-ratio: auto;
+            }
+            .upload-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="header">
+
+                <h1>Προσφορά</h1>
+                <div class="subtitle">ΚΑΘΕ ΤΡΙΤΗ</div>
+            </div>
+            
+            <div class="offers">
+                <div class="offer-box">
+                    <div class="offer-content">
+                        <div class="offer-left">
+                            <div class="offer-title">
+                                <strong>Συντήρηση τεχνητών</strong><br>
+                                (έως νούμερο 3 μόνο χρώμα)
+                            </div>
+                            <div class="plus-sign">+</div>
+                            <div class="offer-title">
+                                <strong>Πεντικιούρ ημιμόνιμο</strong>
+                            </div>
+                        </div>
+                        <div class="price">45€</div>
+                    </div>
+                </div>
+                
+                <div class="offer-box">
+                    <div class="offer-content">
+                        <div class="offer-left">
+                            <div class="offer-title">
+                                <strong>Μανικιούρ ημιμόνιμο</strong>
+                            </div>
+                            <div class="plus-sign">+</div>
+                            <div class="offer-title">
+                                <strong>Πεντικιούρ Spa ημιμόνιμο</strong>
+                            </div>
+                        </div>
+                        <div class="price">38€</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <div class="note">
+                    *Η προσφορά ισχύει μόνο για τηλεφωνικές κρατήσεις
+                </div>
+                <div class="phone">
+                    <span class="phone-icon">📞</span> 6978 643 706
+                </div>
+                <div class="phone">
+                    <span class="phone-icon">📞</span> 2105 619 735
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const logoInput = document.getElementById('logoInput');
+        const logoImg = document.getElementById('logoImg');
+        const uploadBtn = document.querySelector('.upload-btn');
+        
+        logoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    logoImg.src = event.target.result;
+                    logoImg.classList.add('visible');
+                    uploadBtn.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

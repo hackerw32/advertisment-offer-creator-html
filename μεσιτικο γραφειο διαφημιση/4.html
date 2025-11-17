@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instagram Post Editable</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f0f0f0;
+      height: 100vh;
+    }
+    .post {
+      position: relative;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .post .bg-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.25; /* πιο διακριτικό */
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(14, 26, 43, 0.6);
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      color: #fff;
+      padding: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+    .header {
+      border-left: 8px solid #d4af37;
+      padding-left: 20px;
+    }
+    .header h1 {
+      font-size: 56px;
+      margin-bottom: 10px;
+      color: #d4af37;
+    }
+    .header p {
+      font-size: 28px;
+      opacity: 0.9;
+    }
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .option {
+      background: rgba(255,255,255,0.08);
+      padding: 25px;
+      border-left: 5px solid #d4af37;
+      font-size: 26px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: text;
+    }
+    .cta {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 8px;
+      padding: 35px;
+      text-align: center;
+      margin-top: 40px;
+      cursor: text;
+    }
+    .cta h2 {
+      font-size: 36px;
+      color: #d4af37;
+      margin-bottom: 20px;
+    }
+    .cta p {
+      font-size: 22px;
+      line-height: 1.4;
+      opacity: 0.9;
+    }
+    .footer {
+      text-align: right;
+      cursor: text;
+    }
+    .footer h3 {
+      font-size: 40px;
+      margin-bottom: 5px;
+      color: #d4af37;
+    }
+    .footer p {
+      font-size: 26px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="post">
+    <!-- Εικόνα background -->
+    <img class="bg-img" src="https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg" alt="Real Estate Background">
+    <div class="overlay"></div>
+
+    <div class="content">
+      <div class="header">
+        <h1 contenteditable="true">Ψάχνεις Ενοικίαση ή Αγορά;</h1>
+        <p contenteditable="true">Κατοικίας ή Οικοπέδου — έχουμε τη λύση για σένα!</p>
+      </div>
+
+      <div class="options">
+        <div class="option" contenteditable="true">🏠 Ενοικίαση Κατοικίας</div>
+        <div class="option" contenteditable="true">🏡 Αγορά Κατοικίας</div>
+        <div class="option" contenteditable="true">🌿 Ενοικίαση Οικοπέδου</div>
+        <div class="option" contenteditable="true">🏗️ Αγορά Οικοπέδου</div>
+      </div>
+
+      <div class="cta">
+        <h2 contenteditable="true">Δείτε τις διαθέσιμες αγγελίες μας</h2>
+        <p contenteditable="true">
+          Το link θα το βρείτε στην περιγραφή του post.<br>
+          Μπείτε και επιλέξτε την κατηγορία που σας ενδιαφέρει!<br><br>
+          Για να βλέπετε καθημερινά τις νέες αγγελίες,<br>
+          ακολουθήστε μας στο Facebook (link στο bio).
+        </p>
+      </div>
+
+      <div class="footer">
+        <h3 contenteditable="true">Ρίτα Σαμοθράκη</h3>
+        <p contenteditable="true">Μεσιτικό Γραφείο</p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

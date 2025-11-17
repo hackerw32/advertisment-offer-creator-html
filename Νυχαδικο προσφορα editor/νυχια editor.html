@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Offer Editor Ultimate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #1a1a1a;
+            color: white;
+            overflow: hidden;
+        }
+
+        .editor-container { display: flex; height: 100vh; }
+
+        .toolbar {
+            width: 360px;
+            background: #2a2a2a;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #3a3a3a;
+        }
+
+        .toolbar h2 {
+            margin-top: 0;
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .toolbar-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .toolbar-section h3 {
+            margin-bottom: 10px;
+            color: #ddd;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 6px;
+            background: #3a3a3a;
+            border: 2px solid #4a4a4a;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover { background: #4a4a4a; border-color: #ffd700; }
+        .btn.primary { background: #ffd700; color: #1a1a1a; border-color: #ffd700; }
+        .btn.success { background: #4caf50; color: white; border-color: #4caf50; }
+
+        .export-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+        .template-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .template-item {
+            padding: 10px;
+            background: #3a3a3a;
+            border: 2px solid #4a4a4a;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            font-size: 12px;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .template-item:hover { border-color: #ffd700; }
+        .template-item.active { border-color: #ffd700; background: #4a4a4a; }
+        
+        .template-name {
+            flex: 1;
+        }
+        
+        .delete-btn {
+            padding: 4px 8px;
+            background: #f44336;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+        
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .color-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 8px;
+            background: #3a3a3a;
+            border-radius: 6px;
+        }
+
+        .color-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-preview {
+            width: 35px;
+            height: 35px;
+            border-radius: 4px;
+            border: 2px solid #4a4a4a;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .color-label {
+            font-size: 10px;
+            color: #aaa;
+            flex: 1;
+        }
+
+        .opacity-slider {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .offer-controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .offer-controls button {
+            padding: 10px 5px;
+            background: #3a3a3a;
+            border: 2px solid #4a4a4a;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .offer-controls button.active { background: #ffd700; color: #1a1a1a; border-color: #ffd700; }
+
+        .property-panel {
+            background: #333;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .property-panel h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .prop-group { margin-bottom: 12px; }
+
+        .prop-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 11px;
+            color: #aaa;
+            font-weight: 600;
+        }
+
+        .prop-group input[type="text"],
+        .prop-group textarea {
+            width: 100%;
+            padding: 8px;
+            background: #2a2a2a;
+            border: 1px solid #4a4a4a;
+            border-radius: 6px;
+            color: white;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        .prop-group textarea { resize: vertical; min-height: 50px; }
+
+        .prop-group input[type="color"] {
+            width: 100%;
+            height: 35px;
+            border: 1px solid #4a4a4a;
+            border-radius: 6px;
+            background: #2a2a2a;
+            cursor: pointer;
+        }
+
+        .prop-group input[type="range"] { width: 100%; }
+
+        .align-buttons { display: flex; gap: 6px; }
+
+        .align-buttons button {
+            flex: 1;
+            padding: 8px;
+            background: #2a2a2a;
+            border: 1px solid #4a4a4a;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .align-buttons button.active { background: #ffd700; color: #1a1a1a; border-color: #ffd700; }
+
+        .canvas {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            overflow: auto;
+            background: #1a1a1a;
+        }
+
+        .poster {
+            width: 600px;
+            aspect-ratio: 1/1.414;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+        
+        .bg-color-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        #bgImageLayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .poster.instagram { aspect-ratio: 4/5; width: 540px; }
+
+        .bg-image-container {
+            position: absolute;
+            cursor: move;
+            border: 2px dashed transparent;
+            z-index: 0;
+        }
+
+        .bg-image-container:hover { border-color: #ffd700; }
+
+        .bg-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            border-radius: 50%;
+            cursor: nwse-resize;
+            right: -6px;
+            bottom: -6px;
+            z-index: 1;
+        }
+
+        .poster-content {
+            padding: 20px 35px 30px 35px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+
+        .editable {
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            border-radius: 4px;
+        }
+
+        .editable:hover { outline: 2px solid #ffd700; outline-offset: 4px; }
+        .editable.selected { outline: 3px solid #ffd700; outline-offset: 4px; }
+
+        .logo-box {
+            
+            
+            
+            margin: 0 auto 20px;
+            width: fit-content;
+            backdrop-filter: blur(3px);
+        }
+
+        .title {
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            
+        }
+
+        .subtitle {
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 11px;
+            margin-bottom: 4px;
+        }
+
+        .offers-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .offers-section.grid-3,
+        .offers-section.grid-4 { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            margin-bottom: 25px;
+        }
+        
+        .offers-section.grid-3 .offer-card:nth-child(3) { 
+            grid-column: 1 / -1; 
+        }
+
+        .offer-card {
+            border-radius: 18px;
+            padding: 18px 22px;
+            border: 4px solid #d4af37;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .offers-section.grid-3 .offer-card,
+        .offers-section.grid-4 .offer-card {
+            padding: 14px 18px;
+        }
+
+        .offer-layout {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .offer-details { flex: 1; }
+
+        .service-name {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 4px;
+            color: #1a2614;
+        }
+
+        .offers-section.grid-3 .service-name,
+        .offers-section.grid-4 .service-name {
+            font-size: 14px;
+        }
+
+        .plus-symbol {
+            font-size: 44px;
+            color: #d4af37;
+            font-weight: 900;
+            font-family: 'Playfair Display', serif;
+            margin: 8px 0;
+            line-height: 1;
+        }
+
+        .offers-section.grid-3 .plus-symbol,
+        .offers-section.grid-4 .plus-symbol {
+            font-size: 32px;
+            margin: 6px 0;
+        }
+
+        .price-tag {
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #d4af37 100%);
+            padding: 14px 22px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.55);
+            transform: rotate(-4deg);
+            position: relative;
+        }
+
+        .offers-section.grid-3 .price-tag,
+        .offers-section.grid-4 .price-tag {
+            padding: 10px 16px;
+        }
+
+        .price-value {
+            font-size: 52px;
+            color: #1a2614;
+            font-weight: 900;
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+        }
+
+        .offers-section.grid-3 .price-value,
+        .offers-section.grid-4 .price-value {
+            font-size: 38px;
+        }
+
+        .footer-section {
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(10px);
+            padding: 8px 0;
+            margin: 0 -35px -30px -35px;
+            text-align: center;
+            border-top: 3px solid #d4af37;
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: #fff;
+            font-style: italic;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .phone-number {
+            font-size: 20px;
+            color: #ffd700;
+            font-weight: 900;
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+
+        .sparkle-decoration {
+            position: absolute;
+            color: #ffd700;
+            font-size: 16px;
+            opacity: 0.7;
+            z-index: 2;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <div class="toolbar" id="toolbar">
+            <h2>✨ Offer Editor Ultimate</h2>
+            
+            <div class="toolbar-section">
+                <h3>✨ Διακόσμηση</h3>
+                <div class="prop-group">
+                    <label>Αστεράκια: <span id="sparkleCountLabel">6</span></label>
+                    <input type="range" id="sparkleCount" min="0" max="30" value="6" oninput="updateSparkleCount(this.value)">
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <h3>📤 Export</h3>
+                <div class="export-buttons">
+                    <button class="btn primary" onclick="exportA4()">📄 A4 PDF</button>
+                    <button class="btn primary" onclick="exportInstagram()">📸 Instagram</button>
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <h3>💾 Templates</h3>
+                <button class="btn success" onclick="saveTemplate()">💾 Αποθήκευση Template</button>
+                <div class="template-list" id="templateList"></div>
+            </div>
+
+            <div class="toolbar-section">
+                <h3>🎨 Χρώματα</h3>
+                <div class="color-palette" id="colorPalette"></div>
+            </div>
+
+            <div class="toolbar-section">
+                <h3>🖼️ Background Image</h3>
+                <button class="btn" onclick="document.getElementById('bgImageInput').click()">📁 Επιλογή Εικόνας</button>
+                <input type="file" id="bgImageInput" accept="image/*" onchange="loadBgImage(event)">
+                <div id="bgImageControls" style="display:none; margin-top: 10px;">
+                    <div class="prop-group">
+                        <label>Opacity: <span id="bgOpacityLabel">30%</span></label>
+                        <input type="range" id="bgOpacity" min="0" max="100" value="30" oninput="updateBgOpacity(this.value)">
+                    </div>
+                    <div class="prop-group">
+                        <label>Blur: <span id="bgBlurLabel">0px</span></label>
+                        <input type="range" id="bgBlur" min="0" max="20" value="0" oninput="updateBgBlur(this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <h3>🏷️ Λογότυπο</h3>
+                <button class="btn" onclick="document.getElementById('logoImageInput').click()">📁 Επιλογή Λογότυπου</button>
+                <input type="file" id="logoImageInput" accept="image/*" onchange="loadLogoImage(event)">
+                <div id="logoControls" style="display:none; margin-top: 10px;">
+                    <button class="btn danger" onclick="removeLogo()">🗑️ Αφαίρεση</button>
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <h3>📐 Προσφορές</h3>
+                <div class="offer-controls">
+                    <button onclick="setOfferCount(1)">1</button>
+                    <button onclick="setOfferCount(2)" class="active">2</button>
+                    <button onclick="setOfferCount(3)">3</button>
+                    <button onclick="setOfferCount(4)">4</button>
+                </div>
+            </div>
+
+            <div id="propertyPanel"></div>
+        </div>
+
+        <div class="canvas" id="canvas">
+            <div class="poster" id="poster">
+                <div id="bgImageLayer"></div>
+                <div class="bg-color-layer"></div>
+                <div class="poster-content" id="posterContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const baseOffers = [
+            { service1: 'Συντήρηση τεχνητών (έως νούμερο 3 μόνο χρώμα)', service2: 'Πεντικιούρ ημιμόνιμο', price: '45€' },
+            { service1: 'Μανικιούρ ημιμόνιμο', service2: 'Πεντικιούρ Spa ημιμόνιμο', price: '38€' },
+            { service1: 'Τεχνητά νύχια Full Set', service2: 'French Manicure', price: '55€' },
+            { service1: 'Spa Pedicure Deluxe', service2: 'Gel Polish χεριών', price: '42€' }
+        ];
+
+        const defaultTemplates = [
+            { id: 1, name: 'Nuxadiko Classic', background: 'linear-gradient(135deg, rgba(26, 38, 20, 0.70), rgba(44, 62, 31, 0.72), rgba(61, 82, 41, 0.70))', boxBg: 'rgba(255, 255, 255, 0.75)', boxBorder: '#d4af37' },
+            { id: 2, name: 'Rose Gold', background: 'linear-gradient(135deg, rgba(255, 107, 157, 0.75), rgba(196, 69, 105, 0.80))', boxBg: 'rgba(255, 255, 255, 0.90)', boxBorder: '#ffffff' },
+            { id: 3, name: 'Purple Dream', background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.80), rgba(118, 75, 162, 0.85))', boxBg: 'rgba(255, 255, 255, 0.85)', boxBorder: '#ffd700' },
+            { id: 4, name: 'Elegant Black', background: 'linear-gradient(135deg, rgba(44, 62, 80, 0.90), rgba(52, 73, 94, 0.85))', boxBg: 'rgba(236, 240, 241, 0.90)', boxBorder: '#ecf0f1' },
+            { id: 5, name: 'Mint Fresh', background: 'linear-gradient(135deg, rgba(26, 188, 156, 0.75), rgba(22, 160, 133, 0.80))', boxBg: 'rgba(255, 255, 255, 0.88)', boxBorder: '#ffffff' },
+            { id: 6, name: 'Coral Sunset', background: 'linear-gradient(135deg, rgba(255, 127, 80, 0.78), rgba(255, 99, 71, 0.82))', boxBg: 'rgba(255, 255, 255, 0.87)', boxBorder: '#ffd700' },
+            { id: 7, name: 'Ocean Blue', background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.80), rgba(41, 128, 185, 0.85))', boxBg: 'rgba(255, 255, 255, 0.90)', boxBorder: '#ffffff' },
+            { id: 8, name: 'Lavender', background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.75), rgba(142, 68, 173, 0.80))', boxBg: 'rgba(255, 255, 255, 0.88)', boxBorder: '#ffd700' },
+            { id: 9, name: 'Golden Hour', background: 'linear-gradient(135deg, rgba(241, 196, 15, 0.70), rgba(243, 156, 18, 0.75))', boxBg: 'rgba(255, 255, 255, 0.90)', boxBorder: '#2c3e50' },
+            { id: 10, name: 'Berry', background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.78), rgba(192, 57, 43, 0.82))', boxBg: 'rgba(255, 255, 255, 0.90)', boxBorder: '#ffffff' }
+        ];
+
+        let templates = [...defaultTemplates];
+        
+        // Load custom templates from localStorage
+        function loadCustomTemplates() {
+            const saved = localStorage.getItem('customTemplates');
+            if (saved) {
+                try {
+                    const custom = JSON.parse(saved);
+                    templates = [...defaultTemplates, ...custom];
+                } catch (e) {
+                    console.error('Error loading templates:', e);
+                }
+            }
+        }
+        
+        // Save custom templates to localStorage
+        function saveCustomTemplates() {
+            const custom = templates.filter(t => t.id > 10); // Only custom templates
+            localStorage.setItem('customTemplates', JSON.stringify(custom));
+        }
+        
+        loadCustomTemplates();
+        let currentData = {
+            background: templates[0].background,
+            title: { text: 'ΠΡΟΣΦΟΡΑ', color: '#ffd700', size: 72, align: 'center', font: 'Playfair Display' },
+            subtitle: { text: 'ΚΑΘΕ ΤΡΙΤΗ', color: '#ffffff', size: 32, align: 'center' },
+            plus: { size: 44, color: '#d4af37', align: 'center' },
+            offers: [],
+            serviceTextColor: '#1a2614',
+            priceColor: '#1a2614',
+            phones: [
+                { text: '6978 643 706', color: '#ffd700', size: 23, icon: '📞' },
+                { text: '2105 619 735', color: '#ffd700', size: 23, icon: '📞' }
+            ],
+            boxBg: templates[0].boxBg,
+            boxBorder: templates[0].boxBorder,
+            bgImage: null,
+            bgImageOpacity: 30,
+            bgImageBlur: 0,
+            bgImageSize: 100,
+            bgImagePos: { x: 0, y: 0 },
+            logoImage: null,
+            logoSize: 80,
+            logoPos: { x: 50, y: 10 },
+            sparkleCount: 6
+        };
+
+        let selectedElement = null;
+        let currentTemplateId = 1;
+        let offerCount = 2;
+        let draggedImage = null;
+        let resizingImage = false;
+        let isTyping = false;  // Flag to prevent render while typing
+
+        function initTemplates() {
+            renderTemplateList();
+        }
+
+        function renderTemplateList() {
+            const list = document.getElementById('templateList');
+            list.innerHTML = '';
+            templates.forEach(t => {
+                const item = document.createElement('div');
+                item.className = 'template-item';
+                if (t.id === currentTemplateId) item.classList.add('active');
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'template-name';
+                nameSpan.textContent = t.name;
+                nameSpan.onclick = () => loadTemplate(t);
+                
+                item.appendChild(nameSpan);
+                
+                // Add delete button only for custom templates (id > 10)
+                if (t.id > 10) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.textContent = '🗑️';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteTemplate(t.id);
+                    };
+                    item.appendChild(deleteBtn);
+                }
+                
+                list.appendChild(item);
+            });
+        }
+        
+        function deleteTemplate(id) {
+            if (confirm('Είσαι σίγουρος ότι θέλεις να διαγράψεις αυτό το template;')) {
+                templates = templates.filter(t => t.id !== id);
+                saveCustomTemplates();
+                
+                // If we deleted the current template, switch to first template
+                if (currentTemplateId === id) {
+                    loadTemplate(templates[0]);
+                }
+                
+                renderTemplateList();
+            }
+        }
+
+        function saveTemplate() {
+            const name = prompt('Όνομα template:');
+            if (!name) return;
+            
+            const newTemplate = {
+                id: Date.now(),
+                name: name,
+                background: currentData.background,
+                boxBg: currentData.boxBg,
+                boxBorder: currentData.boxBorder
+            };
+            
+            templates.push(newTemplate);
+            saveCustomTemplates();
+            renderTemplateList();
+            alert('Template αποθηκεύτηκε!');
+        }
+
+        function loadTemplate(template) {
+            currentData.background = template.background;
+            currentData.boxBg = template.boxBg;
+            currentData.boxBorder = template.boxBorder;
+            currentTemplateId = template.id;
+            
+            currentData.offers.forEach(offer => {
+                offer.boxBg = template.boxBg;
+                offer.boxBorder = template.boxBorder;
+            });
+            
+            renderTemplateList();
+            render();
+        }
+
+        function renderColorPalette() {
+            const palette = document.getElementById('colorPalette');
+            const colors = [
+                { label: 'Background', key: 'background', supportsAlpha: true },
+                { label: 'Title', key: 'title.color', supportsAlpha: false },
+                { label: 'Subtitle', key: 'subtitle.color', supportsAlpha: false },
+                { label: 'Box BG', key: 'boxBg', supportsAlpha: true },
+                { label: 'Box Border', key: 'boxBorder', supportsAlpha: false },
+                { label: 'Service Text', key: 'serviceTextColor', supportsAlpha: false },
+                { label: 'Price', key: 'priceColor', supportsAlpha: false },
+                { label: 'Plus', key: 'plus.color', supportsAlpha: false }
+            ];
+            
+            palette.innerHTML = colors.map((c, idx) => {
+                const value = getColorValue(c.key);
+                const { color, opacity } = parseColor(value);
+                
+                return `
+                    <div class="color-item">
+                        <div class="color-controls">
+                            <div class="color-preview" style="background: ${value};" onclick="openColorPicker('${c.key}', ${idx})"></div>
+                            <div class="color-label">${c.label}</div>
+                        </div>
+                        ${c.supportsAlpha ? `
+                            <input type="range" class="opacity-slider" min="0" max="100" value="${opacity * 100}" 
+                                   onchange="updateColorOpacity('${c.key}', this.value)" 
+                                   oninput="this.title = this.value + '%'">
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function parseColor(colorStr) {
+            if (colorStr.includes('rgba')) {
+                const match = colorStr.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                if (match) {
+                    return {
+                        color: `rgb(${match[1]}, ${match[2]}, ${match[3]})`,
+                        opacity: match[4] ? parseFloat(match[4]) : 1
+                    };
+                }
+            }
+            return { color: colorStr, opacity: 1 };
+        }
+
+        function rgbToHex(rgb) {
+            const match = rgb.match(/\d+/g);
+            if (!match) return '#ffffff';
+            return '#' + match.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+        }
+
+        function updateColorOpacity(key, opacityPercent) {
+            const opacity = opacityPercent / 100;
+            const currentColor = getColorValue(key);
+            const { color } = parseColor(currentColor);
+            const hex = rgbToHex(color);
+            const rgb = hexToRgb(hex);
+            const newColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
+            
+            updateValue(key, newColor);
+            
+            // Apply to all offer boxes
+            if (key === 'boxBg' || key === 'boxBorder') {
+                document.querySelectorAll('.offer-card').forEach((card, idx) => {
+                    if (key === 'boxBg') {
+                        card.style.background = newColor;
+                        currentData.offers[idx].boxBg = newColor;
+                    } else {
+                        card.style.borderColor = newColor;
+                        currentData.offers[idx].boxBorder = newColor;
+                    }
+                });
+            }
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 255, g: 255, b: 255 };
+        }
+
+        function getColorValue(key) {
+            const keys = key.split('.');
+            let val = currentData;
+            for (let k of keys) val = val[k];
+            return val || '#ffffff';
+        }
+
+        function openColorPicker(key, idx) {
+            const currentColor = getColorValue(key);
+            const { color, opacity } = parseColor(currentColor);
+            const hex = color.startsWith('#') ? color : rgbToHex(color);
+            
+            const input = document.createElement('input');
+            input.type = 'color';
+            input.value = hex;
+            input.onchange = (e) => {
+                const rgb = hexToRgb(e.target.value);
+                const newColor = opacity < 1 ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})` : e.target.value;
+                
+                // Update the value in currentData
+                const keys = key.split('.');
+                let obj = currentData;
+                for (let i = 0; i < keys.length - 1; i++) {
+                    obj = obj[keys[i]];
+                }
+                obj[keys[keys.length - 1]] = newColor;
+                
+                // Apply to all offer boxes if it's boxBg or boxBorder
+                if (key === 'boxBg' || key === 'boxBorder') {
+                    currentData.offers.forEach((offer, i) => {
+                        offer[key] = newColor;
+                        const card = document.querySelector(`.offer-card[data-idx="${i}"]`);
+                        if (card) {
+                            if (key === 'boxBg') {
+                                card.style.background = newColor;
+                            } else {
+                                card.style.borderColor = newColor;
+                            }
+                        }
+                    });
+                }
+                
+                // Apply to all service texts
+                if (key === 'serviceTextColor') {
+                    document.querySelectorAll('.service-name').forEach(el => {
+                        el.style.color = newColor;
+                    });
+                }
+                
+                // Apply to all prices
+                if (key === 'priceColor') {
+                    document.querySelectorAll('.price-value').forEach(el => {
+                        el.style.color = newColor;
+                    });
+                }
+                
+                render();
+            };
+            input.click();
+        }
+
+        function loadBgImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentData.bgImage = e.target.result;
+                currentData.bgImageSize = 100;
+                currentData.bgImagePos = { x: 0, y: 0 };
+                document.getElementById('bgImageControls').style.display = 'block';
+                render();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateBgOpacity(value) {
+            currentData.bgImageOpacity = parseInt(value);
+            document.getElementById('bgOpacityLabel').textContent = value + '%';
+            const img = document.getElementById('draggableImage');
+            if (img) img.style.opacity = value / 100;
+        }
+
+        function loadLogoImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentData.logoImage = e.target.result;
+                currentData.logoSize = 80;
+                currentData.logoPos = { x: 50, y: 10 };
+                document.getElementById('logoControls').style.display = 'block';
+                render();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateSparkleCount(value) {
+            currentData.sparkleCount = parseInt(value);
+            document.getElementById('sparkleCountLabel').textContent = value;
+            renderSparkles();
+        }
+
+        function renderSparkles() {
+            const poster = document.getElementById('poster');
+            
+            // Remove existing sparkles
+            const existing = poster.querySelectorAll('.sparkle-decoration');
+            existing.forEach(el => el.remove());
+            
+            // Add new sparkles
+            const sparkleChars = ['✨', '⭐', '★', '✦', '✧', '◆', '◇'];
+            
+            for (let i = 0; i < currentData.sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle-decoration';
+                sparkle.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
+                
+                // Random position (avoiding edges)
+                sparkle.style.left = (10 + Math.random() * 80) + '%';
+                sparkle.style.top = (10 + Math.random() * 80) + '%';
+                
+                // Random size variation
+                const size = 12 + Math.random() * 10;
+                sparkle.style.fontSize = size + 'px';
+                
+                // Random opacity
+                sparkle.style.opacity = 0.4 + Math.random() * 0.4;
+                
+                poster.appendChild(sparkle);
+            }
+        }
+
+        function removeLogo() {
+            currentData.logoImage = null;
+            document.getElementById('logoControls').style.display = 'none';
+            render();
+        }
+
+        function setOfferCount(count) {
+            offerCount = count;
+            currentData.offers = [];
+            for (let i = 0; i < count; i++) {
+                currentData.offers.push({
+                    ...baseOffers[i],
+                    boxBg: currentData.boxBg,
+                    boxBorder: currentData.boxBorder
+                });
+            }
+            document.querySelectorAll('.offer-controls button').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx + 1 === count);
+            });
+            render();
+        }
+
+        function render() {
+            const poster = document.getElementById('poster');
+            const bgLayer = document.getElementById('bgImageLayer');
+            
+            // Layer 0: Background image (bottom)
+            if (currentData.bgImage) {
+                bgLayer.innerHTML = `
+                    <div class="bg-image-container" id="draggableImage" 
+                         style="position: absolute; 
+                                width: ${currentData.bgImageSize}%; 
+                                height: ${currentData.bgImageSize}%; 
+                                left: ${currentData.bgImagePos.x}px; 
+                                top: ${currentData.bgImagePos.y}px;
+                                opacity: ${currentData.bgImageOpacity / 100};
+                                filter: blur(${currentData.bgImageBlur}px);">
+                        <img src="${currentData.bgImage}" draggable="false">
+                        <div class="resize-handle"></div>
+                    </div>
+                `;
+                
+                // Attach drag and resize handlers
+                const draggable = document.getElementById('draggableImage');
+                const resizeHandle = draggable.querySelector('.resize-handle');
+                
+                draggable.addEventListener('mousedown', startDrag);
+                resizeHandle.addEventListener('mousedown', startResize);
+            } else {
+                bgLayer.innerHTML = '';
+            }
+            
+            // Layer 1: Background color overlay (on top of image)
+            const bgColorLayer = document.querySelector('.bg-color-layer') || document.createElement('div');
+            if (!bgColorLayer.parentElement) {
+                bgColorLayer.className = 'bg-color-layer';
+                poster.insertBefore(bgColorLayer, poster.firstChild.nextSibling);
+            }
+            bgColorLayer.style.background = currentData.background;
+            
+            const content = document.getElementById('posterContent');
+            const gridClass = offerCount === 3 ? 'grid-3' : offerCount === 4 ? 'grid-4' : '';
+            
+            content.innerHTML = `
+                <div>
+                    <div class="logo-box">
+                        ${currentData.logoImage ? 
+                            `<img src="${currentData.logoImage}" style="max-width: 100%; max-height: 100px; display: block; margin: 0 auto;">` :
+                            `<div style="color: rgba(212, 175, 55, 0.5); font-size: 13px; font-weight: 700;">ΛΟΓΟΤΥΠΟ</div>`
+                        }
+                    </div>
+                    <h1 class="title editable" data-type="title" style="font-family: ${currentData.title.font}; font-size: ${currentData.title.size}px; color: ${currentData.title.color}; text-align: ${currentData.title.align};">
+                        ${currentData.title.text}
+                    </h1>
+                    <div class="subtitle editable" data-type="subtitle" style="font-size: ${currentData.subtitle.size}px; color: ${currentData.subtitle.color}; text-align: ${currentData.subtitle.align};">
+                        ${currentData.subtitle.text}
+                    </div>
+                </div>
+                <div class="offers-section ${gridClass}">
+                    ${currentData.offers.map((offer, idx) => `
+                        <div class="offer-card editable" data-type="offer" data-idx="${idx}" style="background: ${offer.boxBg}; border-color: ${offer.boxBorder};">
+                            <div class="offer-layout">
+                                <div class="offer-details">
+                                    <div class="service-name" style="white-space: pre-line; color: ${currentData.serviceTextColor};">${offer.service1}</div>
+                                    <div class="plus-symbol editable" data-type="plus" data-idx="${idx}" style="font-size: ${currentData.plus.size}px; color: ${currentData.plus.color}; text-align: ${currentData.plus.align};">+</div>
+                                    <div class="service-name" style="white-space: pre-line; color: ${currentData.serviceTextColor};">${offer.service2}</div>
+                                </div>
+                                <div class="price-tag">
+                                    <div class="price-value" style="color: ${currentData.priceColor};">${offer.price}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="footer-section">
+                    <div class="disclaimer">*Η προσφορά ισχύει μόνο για τηλεφωνικές κρατήσεις</div>
+                    ${currentData.phones.map((phone, idx) => `
+                        <div class="phone-number editable" data-type="phone" data-idx="${idx}" style="font-size: ${phone.size}px; color: ${phone.color};">
+                            ${phone.icon} ${phone.text}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            attachEditableListeners();
+            renderPropertyPanel();
+            renderColorPalette();
+            renderSparkles();
+        }
+
+        function startDrag(e) {
+            if (e.target.classList.contains('resize-handle')) return;
+            draggedImage = e.currentTarget;
+            const rect = draggedImage.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const offsetY = e.clientY - rect.top;
+            
+            function onMove(e) {
+                const poster = document.getElementById('poster');
+                const posterRect = poster.getBoundingClientRect();
+                currentData.bgImagePos.x = e.clientX - posterRect.left - offsetX;
+                currentData.bgImagePos.y = e.clientY - posterRect.top - offsetY;
+                draggedImage.style.left = currentData.bgImagePos.x + 'px';
+                draggedImage.style.top = currentData.bgImagePos.y + 'px';
+            }
+            
+            function onUp() {
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
+            
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        }
+
+        function startResize(e) {
+            e.stopPropagation();
+            const img = document.getElementById('draggableImage');
+            const startSize = currentData.bgImageSize;
+            const startX = e.clientX;
+            
+            function onMove(e) {
+                const diff = e.clientX - startX;
+                currentData.bgImageSize = Math.max(20, Math.min(200, startSize + diff / 3));
+                img.style.width = currentData.bgImageSize + '%';
+                img.style.height = currentData.bgImageSize + '%';
+            }
+            
+            function onUp() {
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
+            
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        }
+
+        function attachEditableListeners() {
+            document.querySelectorAll('.editable').forEach(el => {
+                el.onclick = (e) => {
+                    e.stopPropagation();
+                    const type = el.dataset.type;
+                    const idx = el.dataset.idx;
+                    
+                    document.querySelectorAll('.editable').forEach(e => e.classList.remove('selected'));
+                    el.classList.add('selected');
+                    
+                    selectedElement = { type, idx: idx ? parseInt(idx) : null };
+                    renderPropertyPanel();
+                };
+            });
+        }
+
+        function updateValue(path, value) {
+            const keys = path.split('.');
+            let obj = currentData;
+            for (let i = 0; i < keys.length - 1; i++) {
+                obj = obj[keys[i]];
+            }
+            obj[keys[keys.length - 1]] = value;
+            
+            // Update offers if we're changing boxBg or boxBorder
+            if (path === 'boxBg' || path === 'boxBorder') {
+                currentData.offers.forEach(offer => {
+                    offer[keys[keys.length - 1]] = value;
+                });
+            }
+            
+            render();
+        }
+
+        function renderPropertyPanel() {
+            const panel = document.getElementById('propertyPanel');
+            
+            if (!selectedElement) {
+                panel.innerHTML = '';
+                return;
+            }
+
+            const { type, idx } = selectedElement;
+
+            if (type === 'title' || type === 'subtitle') {
+                const el = currentData[type];
+                panel.innerHTML = `
+                    <div class="property-panel">
+                        <h3>Edit ${type === 'title' ? 'Title' : 'Subtitle'}</h3>
+                        <div class="prop-group">
+                            <label>Text:</label>
+                            <textarea id="propText">${el.text}</textarea>
+                        </div>
+                        <div class="prop-group">
+                            <label>Color:</label>
+                            <input type="color" id="propColor" value="${el.color}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Size: <span id="sizeLabel">${el.size}px</span></label>
+                            <input type="range" id="propSize" min="20" max="100" value="${el.size}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Align:</label>
+                            <div class="align-buttons">
+                                <button data-align="left" class="${el.align === 'left' ? 'active' : ''}">⬅</button>
+                                <button data-align="center" class="${el.align === 'center' ? 'active' : ''}">↔</button>
+                                <button data-align="right" class="${el.align === 'right' ? 'active' : ''}">➡</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const textArea = document.getElementById('propText');
+                
+                // Save current cursor position
+                let cursorPos = 0;
+                
+                textArea.addEventListener('input', (e) => {
+                    isTyping = true;
+                    cursorPos = e.target.selectionStart;
+                    
+                    currentData[type].text = e.target.value;
+                    const el = document.querySelector(`.${type}`);
+                    if (el) el.textContent = e.target.value;
+                });
+                
+                textArea.addEventListener('blur', () => {
+                    isTyping = false;
+                });
+                
+                textArea.addEventListener('focus', () => {
+                    isTyping = true;
+                });
+                
+                document.getElementById('propColor').addEventListener('input', (e) => {
+                    currentData[type].color = e.target.value;
+                    const el = document.querySelector(`.${type}`);
+                    if (el) el.style.color = e.target.value;
+                });
+                
+                document.getElementById('propSize').addEventListener('input', (e) => {
+                    const size = parseInt(e.target.value);
+                    document.getElementById('sizeLabel').textContent = size + 'px';
+                    currentData[type].size = size;
+                    const el = document.querySelector(`.${type}`);
+                    if (el) el.style.fontSize = size + 'px';
+                });
+                document.querySelectorAll('.align-buttons button').forEach(btn => {
+                    btn.onclick = () => updateValue(`${type}.align`, btn.dataset.align);
+                });
+            } else if (type === 'phone') {
+                const phone = currentData.phones[idx];
+                panel.innerHTML = `
+                    <div class="property-panel">
+                        <h3>Edit Phone ${idx + 1}</h3>
+                        <div class="prop-group">
+                            <label>Text:</label>
+                            <input type="text" id="phoneText" value="${phone.text}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Icon:</label>
+                            <input type="text" id="phoneIcon" value="${phone.icon}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Color:</label>
+                            <input type="color" id="phoneColor" value="${phone.color}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Size: <span id="sizeLabel">${phone.size}px</span></label>
+                            <input type="range" id="phoneSize" min="14" max="40" value="${phone.size}">
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('phoneText').addEventListener('input', (e) => {
+                    isTyping = true;
+                    currentData.phones[idx].text = e.target.value;
+                    const phoneEl = document.querySelector(`.phone-number[data-idx="${idx}"]`);
+                    if (phoneEl) {
+                        phoneEl.innerHTML = `${currentData.phones[idx].icon} ${e.target.value}`;
+                    }
+                });
+                
+                document.getElementById('phoneText').addEventListener('blur', () => {
+                    isTyping = false;
+                });
+                
+                document.getElementById('phoneText').addEventListener('focus', () => {
+                    isTyping = true;
+                });
+                
+                document.getElementById('phoneIcon').addEventListener('input', (e) => {
+                    isTyping = true;
+                    currentData.phones[idx].icon = e.target.value;
+                    const phoneEl = document.querySelector(`.phone-number[data-idx="${idx}"]`);
+                    if (phoneEl) {
+                        phoneEl.innerHTML = `${e.target.value} ${currentData.phones[idx].text}`;
+                    }
+                });
+                
+                document.getElementById('phoneIcon').addEventListener('blur', () => {
+                    isTyping = false;
+                });
+                
+                document.getElementById('phoneColor').addEventListener('input', (e) => {
+                    currentData.phones[idx].color = e.target.value;
+                    const phoneEl = document.querySelector(`.phone-number[data-idx="${idx}"]`);
+                    if (phoneEl) phoneEl.style.color = e.target.value;
+                });
+                
+                document.getElementById('phoneSize').addEventListener('input', (e) => {
+                    const size = parseInt(e.target.value);
+                    document.getElementById('sizeLabel').textContent = size + 'px';
+                    currentData.phones[idx].size = size;
+                    const phoneEl = document.querySelector(`.phone-number[data-idx="${idx}"]`);
+                    if (phoneEl) phoneEl.style.fontSize = size + 'px';
+                });
+            } else if (type === 'plus') {
+                const plus = currentData.plus;
+                panel.innerHTML = `
+                    <div class="property-panel">
+                        <h3>Edit Plus Symbol</h3>
+                        <div class="prop-group">
+                            <label>Size: <span id="sizeLabel">${plus.size}px</span></label>
+                            <input type="range" id="propSize" min="20" max="80" value="${plus.size}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Color:</label>
+                            <input type="color" id="propColor" value="${plus.color}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Position:</label>
+                            <div class="align-buttons">
+                                <button data-align="left" class="${plus.align === 'left' ? 'active' : ''}">⬅</button>
+                                <button data-align="center" class="${plus.align === 'center' ? 'active' : ''}">↔</button>
+                                <button data-align="right" class="${plus.align === 'right' ? 'active' : ''}">➡</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('propSize').addEventListener('input', (e) => {
+                    document.getElementById('sizeLabel').textContent = e.target.value + 'px';
+                    updateValue('plus.size', parseInt(e.target.value));
+                });
+                document.getElementById('propColor').addEventListener('input', (e) => updateValue('plus.color', e.target.value));
+                document.querySelectorAll('.align-buttons button').forEach(btn => {
+                    btn.onclick = () => updateValue('plus.align', btn.dataset.align);
+                });
+            } else if (type === 'offer') {
+                const offer = currentData.offers[idx];
+                panel.innerHTML = `
+                    <div class="property-panel">
+                        <h3>Edit Offer ${idx + 1}</h3>
+                        <div class="prop-group">
+                            <label>Service 1:</label>
+                            <textarea id="service1">${offer.service1}</textarea>
+                        </div>
+                        <div class="prop-group">
+                            <label>Service 2:</label>
+                            <textarea id="service2">${offer.service2}</textarea>
+                        </div>
+                        <div class="prop-group">
+                            <label>Price:</label>
+                            <input type="text" id="price" value="${offer.price}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Box Background:</label>
+                            <input type="color" id="boxBg" value="${offer.boxBg.includes('rgba') ? '#ffffff' : offer.boxBg}">
+                        </div>
+                        <div class="prop-group">
+                            <label>Border Color:</label>
+                            <input type="color" id="boxBorder" value="${offer.boxBorder}">
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('service1').addEventListener('input', (e) => {
+                    isTyping = true;
+                    currentData.offers[idx].service1 = e.target.value;
+                    const serviceEls = document.querySelectorAll(`.offer-card[data-idx="${idx}"] .service-name`);
+                    if (serviceEls[0]) serviceEls[0].textContent = e.target.value;
+                });
+                
+                document.getElementById('service1').addEventListener('blur', () => {
+                    isTyping = false;
+                });
+                
+                document.getElementById('service1').addEventListener('focus', () => {
+                    isTyping = true;
+                });
+                
+                document.getElementById('service2').addEventListener('input', (e) => {
+                    isTyping = true;
+                    currentData.offers[idx].service2 = e.target.value;
+                    const serviceEls = document.querySelectorAll(`.offer-card[data-idx="${idx}"] .service-name`);
+                    if (serviceEls[1]) serviceEls[1].textContent = e.target.value;
+                });
+                
+                document.getElementById('service2').addEventListener('blur', () => {
+                    isTyping = false;
+                });
+                
+                document.getElementById('service2').addEventListener('focus', () => {
+                    isTyping = true;
+                });
+                
+                document.getElementById('price').addEventListener('input', (e) => {
+                    isTyping = true;
+                    currentData.offers[idx].price = e.target.value;
+                    const priceEl = document.querySelector(`.offer-card[data-idx="${idx}"] .price-value`);
+                    if (priceEl) priceEl.textContent = e.target.value;
+                });
+                
+                document.getElementById('price').addEventListener('blur', () => {
+                    isTyping = false;
+                });
+                
+                document.getElementById('price').addEventListener('focus', () => {
+                    isTyping = true;
+                });
+                
+                document.getElementById('boxBg').addEventListener('input', (e) => updateValue(`offers.${idx}.boxBg`, e.target.value));
+                document.getElementById('boxBorder').addEventListener('input', (e) => updateValue(`offers.${idx}.boxBorder`, e.target.value));
+            }
+        }
+
+        async function exportA4() {
+            const poster = document.getElementById('poster');
+            poster.classList.remove('instagram');
+            
+            setTimeout(async () => {
+                const canvas = await html2canvas(poster, { 
+                    scale: 4,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    useCORS: true
+                });
+                
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                
+                const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, '', 'FAST');
+                pdf.save('offer-a4.pdf');
+            }, 200);
+        }
+
+        async function exportInstagram() {
+            const poster = document.getElementById('poster');
+            poster.classList.add('instagram');
+            
+            setTimeout(async () => {
+                const canvas = await html2canvas(poster, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    useCORS: true,
+                    width: 1080,
+                    height: 1350,
+                    windowWidth: 1080,
+                    windowHeight: 1350
+                });
+                
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = 1080;
+                finalCanvas.height = 1350;
+                const ctx = finalCanvas.getContext('2d');
+                ctx.drawImage(canvas, 0, 0, 1080, 1350);
+                
+                finalCanvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'offer-instagram.jpg';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/jpeg', 0.98);
+                
+                poster.classList.remove('instagram');
+                render();
+            }, 200);
+        }
+
+        setOfferCount(2);
+        initTemplates();
+        render();
+    </script>
+</body>
+</html>

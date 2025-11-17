@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Post - Ρίτα Σαμοθράκη</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #eaeaea;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .post {
+        width: 1080px;
+        height: 1080px;
+        background: linear-gradient(145deg, #0e1a2b 0%, #1e2d4c 100%);
+        color: #fff;
+        padding: 80px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .post::before {
+        content: "";
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        background: rgba(212,175,55,0.2);
+        border-radius: 50%;
+        filter: blur(50px);
+    }
+
+    .header {
+        border-left: 8px solid #d4af37;
+        padding-left: 30px;
+        margin-bottom: 60px;
+    }
+
+    .header h1 {
+        font-size: 56px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        color: #d4af37;
+    }
+
+    .header p {
+        font-size: 28px;
+        font-weight: 400;
+        opacity: 0.9;
+    }
+
+    .options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+
+    .option {
+        background: rgba(255,255,255,0.08);
+        border-left: 5px solid #d4af37;
+        padding: 30px;
+        font-size: 28px;
+        font-weight: 600;
+        border-radius: 6px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .cta {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(212,175,55,0.3);
+        border-radius: 8px;
+        padding: 40px;
+        margin-bottom: 60px;
+        text-align: center;
+    }
+
+    .cta h2 {
+        font-size: 36px;
+        color: #d4af37;
+        margin-bottom: 20px;
+    }
+
+    .cta p {
+        font-size: 24px;
+        opacity: 0.9;
+        line-height: 1.5;
+    }
+
+    .footer {
+        text-align: right;
+    }
+
+    .footer h3 {
+        font-size: 40px;
+        font-weight: 700;
+        color: #d4af37;
+    }
+
+    .footer p {
+        font-size: 26px;
+        opacity: 0.85;
+    }
+</style>
+</head>
+<body>
+    <div class="post">
+        <div class="header">
+            <h1>Ψάχνεις Ενοικίαση ή Αγορά;</h1>
+            <p>Κατοικίας ή Οικοπέδου — έχουμε τη λύση για σένα!</p>
+        </div>
+
+        <div class="options">
+            <div class="option">🏠 Ενοικίαση Κατοικίας</div>
+            <div class="option">🏡 Αγορά Κατοικίας</div>
+            <div class="option">🌿 Ενοικίαση Οικοπέδου</div>
+            <div class="option">🏗️ Αγορά Οικοπέδου</div>
+        </div>
+
+        <div class="cta">
+            <h2>Δείτε τις διαθέσιμες αγγελίες μας</h2>
+            <p>Το link θα το βρείτε στην περιγραφή του post.<br>
+            Μπείτε και επιλέξτε την κατηγορία που σας ενδιαφέρει!</p>
+            <br>
+            <p>Για να βλέπετε καθημερινά τις νέες αγγελίες,<br>
+            ακολουθήστε μας στο Facebook (link στο bio).</p>
+        </div>
+
+        <div class="footer">
+            <h3>Ρίτα Σαμοθράκη</h3>
+            <p>Μεσιτικό Γραφείο</p>
+        </div>
+    </div>
+</body>
+</html>
