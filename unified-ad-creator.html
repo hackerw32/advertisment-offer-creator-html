@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Advertisement & Offer Creator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 380px;
+            background: #0f0f1e;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.5);
+            border-radius: 4px;
+        }
+
+        .logo-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .logo-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: #d4af37;
+            margin-bottom: 5px;
+        }
+
+        .logo-header p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .lang-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #1a1a1a;
+            border-color: #d4af37;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #d4af37;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 5px;
+            font-size: 13px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .color-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input {
+            width: 60px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #1a1a1a;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .template-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .template-card:hover {
+            transform: translateY(-3px);
+            border-color: #d4af37;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .template-card.active {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .template-card h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #d4af37;
+        }
+
+        .template-card p {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .offers-count-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .count-btn {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .count-btn:hover {
+            border-color: #d4af37;
+        }
+
+        .count-btn.active {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #1a1a1a;
+            border-color: #d4af37;
+        }
+
+        .booklet-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .booklet-btn {
+            padding: 15px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .booklet-btn:hover {
+            border-color: #d4af37;
+        }
+
+        .booklet-btn.active {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #1a1a1a;
+            border-color: #d4af37;
+        }
+
+        .booklet-btn .number {
+            display: block;
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 3px;
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #16213e;
+        }
+
+        .canvas-header {
+            background: #0f0f1e;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .canvas-header h2 {
+            font-size: 18px;
+            color: #d4af37;
+        }
+
+        .canvas-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .canvas-content {
+            flex: 1;
+            overflow: auto;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .preview-container {
+            background: #fff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .page-container {
+            width: 1080px;
+            min-height: 1080px;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .page-container.booklet-mode {
+            width: 794px;
+            min-height: 1123px;
+        }
+
+        /* Template Styles */
+        .template-elegant {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4e 100%);
+            color: #fff;
+            padding: 60px;
+        }
+
+        .template-elegant .header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 30px;
+        }
+
+        .template-elegant .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: #d4af37;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .template-elegant .subtitle {
+            font-size: 22px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
+        .template-elegant .offers-grid {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .template-elegant .offers-grid.count-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .template-elegant .offers-grid.count-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-elegant .offers-grid.count-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .template-elegant .offers-grid.count-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-elegant .offer-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 4px solid #d4af37;
+            transition: all 0.3s;
+        }
+
+        .template-elegant .offer-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+
+        .template-elegant .offer-description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .template-elegant .offer-price {
+            font-size: 32px;
+            font-weight: 900;
+            color: #f4d03f;
+            text-align: right;
+        }
+
+        .template-elegant .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .template-elegant .contact-info {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Modern Template */
+        .template-modern {
+            background: #ffffff;
+            color: #1a1a1a;
+            padding: 60px;
+        }
+
+        .template-modern .header {
+            margin-bottom: 50px;
+        }
+
+        .template-modern .title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 52px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .template-modern .subtitle {
+            font-size: 20px;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .template-modern .offers-grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .template-modern .offers-grid.count-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .template-modern .offers-grid.count-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-modern .offers-grid.count-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .template-modern .offers-grid.count-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-modern .offer-card {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-modern .offer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #2563eb, #7c3aed);
+        }
+
+        .template-modern .offer-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .template-modern .offer-description {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .template-modern .offer-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: #2563eb;
+            text-align: right;
+        }
+
+        .template-modern .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .template-modern .contact-info {
+            font-size: 16px;
+            color: #475569;
+        }
+
+        /* Minimal Template */
+        .template-minimal {
+            background: #f5f5f5;
+            color: #1a1a1a;
+            padding: 80px 60px;
+        }
+
+        .template-minimal .header {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .template-minimal .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+
+        .template-minimal .subtitle {
+            font-size: 18px;
+            color: #666;
+            font-weight: 400;
+        }
+
+        .template-minimal .offers-grid {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .template-minimal .offers-grid.count-1 {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .template-minimal .offers-grid.count-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-minimal .offers-grid.count-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .template-minimal .offers-grid.count-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-minimal .offer-card {
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 0;
+            border: 1px solid #e0e0e0;
+        }
+
+        .template-minimal .offer-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 10px;
+        }
+
+        .template-minimal .offer-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .template-minimal .offer-price {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-align: left;
+        }
+
+        .template-minimal .footer {
+            text-align: center;
+            padding-top: 40px;
+        }
+
+        .template-minimal .contact-info {
+            font-size: 15px;
+            color: #666;
+        }
+
+        /* Bold Template */
+        .template-bold {
+            background: linear-gradient(135deg, #ff006e 0%, #fb5607 100%);
+            color: #fff;
+            padding: 60px;
+        }
+
+        .template-bold .header {
+            margin-bottom: 50px;
+        }
+
+        .template-bold .title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 64px;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .template-bold .subtitle {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .template-bold .offers-grid {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .template-bold .offers-grid.count-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .template-bold .offers-grid.count-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-bold .offers-grid.count-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .template-bold .offers-grid.count-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-bold .offer-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .template-bold .offer-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .template-bold .offer-description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .template-bold .offer-price {
+            font-size: 36px;
+            font-weight: 900;
+            color: #ffea00;
+            text-align: right;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .template-bold .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .template-bold .contact-info {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Professional Template */
+        .template-professional {
+            background: #ffffff;
+            color: #1a1a1a;
+            padding: 60px;
+        }
+
+        .template-professional .header {
+            margin-bottom: 50px;
+            padding-bottom: 25px;
+            border-bottom: 3px solid #1a1a1a;
+        }
+
+        .template-professional .title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 46px;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .template-professional .subtitle {
+            font-size: 19px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .template-professional .offers-grid {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .template-professional .offers-grid.count-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .template-professional .offers-grid.count-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-professional .offers-grid.count-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .template-professional .offers-grid.count-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .template-professional .offer-card {
+            background: #f8f8f8;
+            padding: 30px;
+            border-radius: 5px;
+            border-left: 6px solid #1a1a1a;
+        }
+
+        .template-professional .offer-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .template-professional .offer-description {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .template-professional .offer-price {
+            font-size: 30px;
+            font-weight: 800;
+            color: #1a1a1a;
+            text-align: right;
+        }
+
+        .template-professional .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .template-professional .contact-info {
+            font-size: 17px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Image Upload Styles */
+        .image-upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .image-upload-area:hover {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .image-upload-area.has-image {
+            border-style: solid;
+            border-color: #d4af37;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .range-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .range-input {
+            flex: 1;
+        }
+
+        .range-value {
+            min-width: 45px;
+            text-align: center;
+            font-size: 13px;
+            color: #d4af37;
+            font-weight: 700;
+        }
+
+        /* Custom scrollbar for canvas */
+        .canvas-content::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        .canvas-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .canvas-content::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.5);
+            border-radius: 5px;
+        }
+
+        /* Saved Templates List */
+        .saved-templates-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .saved-template-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .saved-template-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .saved-template-name {
+            font-size: 13px;
+            color: #fff;
+            flex: 1;
+        }
+
+        .saved-template-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-icon {
+            padding: 5px 10px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+        }
+
+        .btn-icon:hover {
+            background: #d4af37;
+            color: #1a1a1a;
+        }
+
+        .btn-danger {
+            background: rgba(220, 38, 38, 0.2);
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .accordion {
+            margin-bottom: 15px;
+        }
+
+        .accordion-header {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .accordion-header.active {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #d4af37;
+        }
+
+        .accordion-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #d4af37;
+        }
+
+        .accordion-icon {
+            font-size: 12px;
+            color: #d4af37;
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-content.active {
+            max-height: 1000px;
+            padding-top: 15px;
+        }
+
+        /* Logo overlay on template */
+        .logo-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            max-width: 150px;
+            max-height: 80px;
+            z-index: 10;
+        }
+
+        .background-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* Make sure content is above background */
+        .page-container > div {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-header">
+                <h1>Ad Creator Pro</h1>
+                <p class="app-subtitle" data-lang-el="Δημιουργός Διαφημίσεων & Προσφορών" data-lang-en="Advertisement & Offer Creator">Δημιουργός Διαφημίσεων & Προσφορών</p>
+            </div>
+
+            <!-- Language Toggle -->
+            <div class="lang-toggle">
+                <button class="lang-btn active" data-lang="el" onclick="switchLanguage('el')">Ελληνικά</button>
+                <button class="lang-btn" data-lang="en" onclick="switchLanguage('en')">English</button>
+            </div>
+
+            <!-- Template Selection -->
+            <div class="section">
+                <div class="section-title" data-lang-el="Επιλογή Template" data-lang-en="Select Template">Επιλογή Template</div>
+                <div class="template-grid">
+                    <div class="template-card active" data-template="elegant" onclick="selectTemplate('elegant')">
+                        <h3 data-lang-el="Elegant" data-lang-en="Elegant">Elegant</h3>
+                        <p data-lang-el="Πολυτελές σχέδιο" data-lang-en="Luxury design">Πολυτελές σχέδιο</p>
+                    </div>
+                    <div class="template-card" data-template="modern" onclick="selectTemplate('modern')">
+                        <h3 data-lang-el="Modern" data-lang-en="Modern">Modern</h3>
+                        <p data-lang-el="Καθαρό & σύγχρονο" data-lang-en="Clean & contemporary">Καθαρό & σύγχρονο</p>
+                    </div>
+                    <div class="template-card" data-template="minimal" onclick="selectTemplate('minimal')">
+                        <h3 data-lang-el="Minimal" data-lang-en="Minimal">Minimal</h3>
+                        <p data-lang-el="Απλό & κομψό" data-lang-en="Simple & elegant">Απλό & κομψό</p>
+                    </div>
+                    <div class="template-card" data-template="bold" onclick="selectTemplate('bold')">
+                        <h3 data-lang-el="Bold" data-lang-en="Bold">Bold</h3>
+                        <p data-lang-el="Δυνατό & έντονο" data-lang-en="Strong & vibrant">Δυνατό & έντονο</p>
+                    </div>
+                    <div class="template-card" data-template="professional" onclick="selectTemplate('professional')">
+                        <h3 data-lang-el="Professional" data-lang-en="Professional">Professional</h3>
+                        <p data-lang-el="Επαγγελματικό" data-lang-en="Corporate style">Επαγγελματικό</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout Type -->
+            <div class="section">
+                <div class="section-title" data-lang-el="Τύπος Διάταξης" data-lang-en="Layout Type">Τύπος Διάταξης</div>
+                <div class="form-group">
+                    <button class="btn btn-secondary btn-block" onclick="setLayoutType('single')" id="btnSingle">
+                        <span data-lang-el="Μονή Σελίδα" data-lang-en="Single Page">Μονή Σελίδα</span>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <div class="section-title" style="font-size: 12px; margin-top: 10px;" data-lang-el="Φυλλάδιο" data-lang-en="Booklet">Φυλλάδιο</div>
+                    <div class="booklet-grid">
+                        <div class="booklet-btn" onclick="setBookletPages(2)">
+                            <span class="number">2</span>
+                            <span data-lang-el="σελ." data-lang-en="pages">σελ.</span>
+                        </div>
+                        <div class="booklet-btn" onclick="setBookletPages(4)">
+                            <span class="number">4</span>
+                            <span data-lang-el="σελ." data-lang-en="pages">σελ.</span>
+                        </div>
+                        <div class="booklet-btn" onclick="setBookletPages(8)">
+                            <span class="number">8</span>
+                            <span data-lang-el="σελ." data-lang-en="pages">σελ.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offers Count -->
+            <div class="section">
+                <div class="section-title" data-lang-el="Αριθμός Προσφορών" data-lang-en="Number of Offers">Αριθμός Προσφορών</div>
+                <div class="offers-count-grid">
+                    <div class="count-btn active" onclick="setOffersCount(1)">1</div>
+                    <div class="count-btn" onclick="setOffersCount(2)">2</div>
+                    <div class="count-btn" onclick="setOffersCount(3)">3</div>
+                    <div class="count-btn" onclick="setOffersCount(4)">4</div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="section">
+                <div class="section-title" data-lang-el="Περιεχόμενο" data-lang-en="Content">Περιεχόμενο</div>
+                <div class="form-group">
+                    <label class="form-label" data-lang-el="Τίτλος" data-lang-en="Title">Τίτλος</label>
+                    <input type="text" class="form-input" id="mainTitle" value="ΠΡΟΣΦΟΡΕΣ" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-lang-el="Υπότιτλος" data-lang-en="Subtitle">Υπότιτλος</label>
+                    <input type="text" class="form-input" id="mainSubtitle" value="Ειδικές προσφορές του μήνα" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-lang-el="Στοιχεία Επικοινωνίας" data-lang-en="Contact Info">Στοιχεία Επικοινωνίας</label>
+                    <input type="text" class="form-input" id="contactInfo" value="Τηλ: 210 123 4567 | info@example.gr" oninput="updatePreview()">
+                </div>
+            </div>
+
+            <!-- Offers Content -->
+            <div class="section" id="offersSection">
+                <div class="section-title" data-lang-el="Προσφορές" data-lang-en="Offers">Προσφορές</div>
+                <div id="offersInputs"></div>
+            </div>
+
+            <!-- Advanced Customization -->
+            <div class="section">
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion('customization')">
+                        <span class="accordion-title" data-lang-el="Προηγμένες Ρυθμίσεις" data-lang-en="Advanced Settings">Προηγμένες Ρυθμίσεις</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content" id="customization">
+                        <div class="form-group">
+                            <label class="form-label" data-lang-el="Χρώμα Φόντου" data-lang-en="Background Color">Χρώμα Φόντου</label>
+                            <div class="color-input-group">
+                                <input type="color" class="color-input" id="bgColor1" value="#1a1a2e" oninput="updateCustomColors()">
+                                <input type="color" class="color-input" id="bgColor2" value="#2a2a4e" oninput="updateCustomColors()">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang-el="Χρώμα Τίτλου" data-lang-en="Title Color">Χρώμα Τίτλου</label>
+                            <input type="color" class="color-input" id="titleColor" value="#d4af37" oninput="updateCustomColors()" style="width: 100%;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang-el="Χρώμα Κειμένου" data-lang-en="Text Color">Χρώμα Κειμένου</label>
+                            <input type="color" class="color-input" id="textColor" value="#ffffff" oninput="updateCustomColors()" style="width: 100%;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang-el="Χρώμα Τιμής" data-lang-en="Price Color">Χρώμα Τιμής</label>
+                            <input type="color" class="color-input" id="priceColor" value="#f4d03f" oninput="updateCustomColors()" style="width: 100%;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang-el="Μέγεθος Τίτλου (px)" data-lang-en="Title Size (px)">Μέγεθος Τίτλου (px)</label>
+                            <div class="range-group">
+                                <input type="range" class="range-input" id="titleSize" min="30" max="80" value="56" oninput="updateCustomSizes()">
+                                <span class="range-value" id="titleSizeValue">56</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images -->
+            <div class="section">
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion('images')">
+                        <span class="accordion-title" data-lang-el="Εικόνες" data-lang-en="Images">Εικόνες</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content" id="images">
+                        <div class="form-group">
+                            <label class="form-label" data-lang-el="Λογότυπο" data-lang-en="Logo">Λογότυπο</label>
+                            <div class="image-upload-area" id="logoUploadArea" onclick="document.getElementById('logoInput').click()">
+                                <span data-lang-el="Κλικ για προσθήκη λογότυπου" data-lang-en="Click to add logo">Κλικ για προσθήκη λογότυπου</span>
+                                <input type="file" id="logoInput" accept="image/*" style="display: none;" onchange="handleLogoUpload(event)">
+                                <img id="logoPreview" class="image-preview" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang-el="Φόντο Εικόνα" data-lang-en="Background Image">Φόντο Εικόνα</label>
+                            <div class="image-upload-area" id="bgImageUploadArea" onclick="document.getElementById('bgImageInput').click()">
+                                <span data-lang-el="Κλικ για προσθήκη εικόνας φόντου" data-lang-en="Click to add background">Κλικ για προσθήκη εικόνας φόντου</span>
+                                <input type="file" id="bgImageInput" accept="image/*" style="display: none;" onchange="handleBgImageUpload(event)">
+                                <img id="bgImagePreview" class="image-preview" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group" id="bgOpacityGroup" style="display: none;">
+                            <label class="form-label" data-lang-el="Διαφάνεια Φόντου" data-lang-en="Background Opacity">Διαφάνεια Φόντου</label>
+                            <div class="range-group">
+                                <input type="range" class="range-input" id="bgOpacity" min="0" max="100" value="50" oninput="updateBgOpacity()">
+                                <span class="range-value" id="bgOpacityValue">50%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save/Load -->
+            <div class="section">
+                <div class="section-title" data-lang-el="Αποθήκευση / Φόρτωση" data-lang-en="Save / Load">Αποθήκευση / Φόρτωση</div>
+                <div class="form-group">
+                    <label class="form-label" data-lang-el="Όνομα Template" data-lang-en="Template Name">Όνομα Template</label>
+                    <input type="text" class="form-input" id="templateName" placeholder="My Template">
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveTemplate()" style="flex: 1;">
+                        <span data-lang-el="Αποθήκευση" data-lang-en="Save">Αποθήκευση</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportTemplate()" style="flex: 1;">
+                        <span data-lang-el="Εξαγωγή" data-lang-en="Export">Εξαγωγή</span>
+                    </button>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <button class="btn btn-secondary btn-block" onclick="document.getElementById('importInput').click()">
+                        <span data-lang-el="Εισαγωγή Template" data-lang-en="Import Template">Εισαγωγή Template</span>
+                    </button>
+                    <input type="file" id="importInput" accept=".json" style="display: none;" onchange="importTemplate(event)">
+                </div>
+                <div class="saved-templates-list" id="savedTemplatesList"></div>
+            </div>
+
+            <!-- Export Options -->
+            <div class="section">
+                <div class="section-title" data-lang-el="Εξαγωγή" data-lang-en="Export">Εξαγωγή</div>
+                <button class="btn btn-primary btn-block" onclick="exportAsPDF()">
+                    <span data-lang-el="Εξαγωγή PDF A4" data-lang-en="Export PDF A4">Εξαγωγή PDF A4</span>
+                </button>
+                <button class="btn btn-secondary btn-block" style="margin-top: 10px;" onclick="exportAsInstagram()">
+                    <span data-lang-el="Εξαγωγή Instagram (1080x1080)" data-lang-en="Export Instagram (1080x1080)">Εξαγωγή Instagram (1080x1080)</span>
+                </button>
+                <button class="btn btn-secondary btn-block" style="margin-top: 10px;" id="exportBookletBtn" onclick="exportBookletPDF()" style="display: none;">
+                    <span data-lang-el="Εξαγωγή Φυλλαδίου PDF" data-lang-en="Export Booklet PDF">Εξαγωγή Φυλλαδίου PDF</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area">
+            <div class="canvas-header">
+                <h2 data-lang-el="Προεπισκόπηση" data-lang-en="Preview">Προεπισκόπηση</h2>
+                <div class="canvas-actions">
+                    <button class="btn btn-secondary" onclick="resetTemplate()">
+                        <span data-lang-el="Επαναφορά" data-lang-en="Reset">Επαναφορά</span>
+                    </button>
+                </div>
+            </div>
+            <div class="canvas-content">
+                <div class="preview-container" id="previewContainer">
+                    <div class="page-container template-elegant" id="pageContainer">
+                        <!-- Content will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentState = {
+            language: 'el',
+            template: 'elegant',
+            layoutType: 'single',
+            bookletPages: 0,
+            offersCount: 1,
+            mainTitle: 'ΠΡΟΣΦΟΡΕΣ',
+            mainSubtitle: 'Ειδικές προσφορές του μήνα',
+            contactInfo: 'Τηλ: 210 123 4567 | info@example.gr',
+            offers: [
+                { title: 'Προσφορά 1', description: 'Περιγραφή της προσφοράς', price: '€19.99' }
+            ],
+            customization: {
+                bgColor1: '#1a1a2e',
+                bgColor2: '#2a2a4e',
+                titleColor: '#d4af37',
+                textColor: '#ffffff',
+                priceColor: '#f4d03f',
+                titleSize: 56
+            },
+            logo: null,
+            bgImage: null,
+            bgOpacity: 50
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeOffersInputs();
+            updatePreview();
+            loadSavedTemplates();
+        });
+
+        // Language switching
+        function switchLanguage(lang) {
+            currentState.language = lang;
+
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            // Update all translatable elements
+            document.querySelectorAll('[data-lang-el]').forEach(element => {
+                const text = element.getAttribute(`data-lang-${lang}`);
+                if (element.tagName === 'INPUT' && element.type !== 'button') {
+                    element.placeholder = text;
+                } else {
+                    element.textContent = text;
+                }
+            });
+        }
+
+        // Template selection
+        function selectTemplate(template) {
+            currentState.template = template;
+
+            // Update UI
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.toggle('active', card.dataset.template === template);
+            });
+
+            // Update page container class
+            const container = document.getElementById('pageContainer');
+            container.className = `page-container template-${template}`;
+
+            updatePreview();
+        }
+
+        // Layout type
+        function setLayoutType(type) {
+            currentState.layoutType = type;
+            currentState.bookletPages = 0;
+
+            document.querySelectorAll('.booklet-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('exportBookletBtn').style.display = 'none';
+
+            updatePreview();
+        }
+
+        function setBookletPages(pages) {
+            currentState.layoutType = 'booklet';
+            currentState.bookletPages = pages;
+
+            document.querySelectorAll('.booklet-btn').forEach(btn => {
+                const btnPages = parseInt(btn.textContent);
+                btn.classList.toggle('active', btnPages === pages);
+            });
+
+            document.getElementById('exportBookletBtn').style.display = 'block';
+
+            updatePreview();
+        }
+
+        // Offers count
+        function setOffersCount(count) {
+            currentState.offersCount = count;
+
+            // Update UI
+            document.querySelectorAll('.count-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.textContent) === count);
+            });
+
+            // Update offers array
+            while (currentState.offers.length < count) {
+                currentState.offers.push({
+                    title: `Προσφορά ${currentState.offers.length + 1}`,
+                    description: 'Περιγραφή της προσφοράς',
+                    price: '€19.99'
+                });
+            }
+
+            initializeOffersInputs();
+            updatePreview();
+        }
+
+        // Initialize offer inputs
+        function initializeOffersInputs() {
+            const container = document.getElementById('offersInputs');
+            container.innerHTML = '';
+
+            for (let i = 0; i < currentState.offersCount; i++) {
+                const offerDiv = document.createElement('div');
+                offerDiv.className = 'form-group';
+                offerDiv.style.marginBottom = '20px';
+                offerDiv.style.paddingBottom = '20px';
+                offerDiv.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+
+                offerDiv.innerHTML = `
+                    <label class="form-label">
+                        <span data-lang-el="Προσφορά ${i + 1}" data-lang-en="Offer ${i + 1}">Προσφορά ${i + 1}</span>
+                    </label>
+                    <input type="text" class="form-input" id="offerTitle${i}" value="${currentState.offers[i]?.title || ''}"
+                           placeholder="${currentState.language === 'el' ? 'Τίτλος' : 'Title'}" oninput="updateOfferContent(${i})">
+                    <textarea class="form-textarea" id="offerDesc${i}"
+                              placeholder="${currentState.language === 'el' ? 'Περιγραφή' : 'Description'}"
+                              oninput="updateOfferContent(${i})" style="margin-top: 8px;">${currentState.offers[i]?.description || ''}</textarea>
+                    <input type="text" class="form-input" id="offerPrice${i}" value="${currentState.offers[i]?.price || ''}"
+                           placeholder="${currentState.language === 'el' ? 'Τιμή' : 'Price'}" oninput="updateOfferContent(${i})" style="margin-top: 8px;">
+                `;
+
+                container.appendChild(offerDiv);
+            }
+        }
+
+        // Update offer content
+        function updateOfferContent(index) {
+            if (!currentState.offers[index]) {
+                currentState.offers[index] = {};
+            }
+
+            currentState.offers[index].title = document.getElementById(`offerTitle${index}`).value;
+            currentState.offers[index].description = document.getElementById(`offerDesc${index}`).value;
+            currentState.offers[index].price = document.getElementById(`offerPrice${index}`).value;
+
+            updatePreview();
+        }
+
+        // Update preview
+        function updatePreview() {
+            currentState.mainTitle = document.getElementById('mainTitle').value;
+            currentState.mainSubtitle = document.getElementById('mainSubtitle').value;
+            currentState.contactInfo = document.getElementById('contactInfo').value;
+
+            const container = document.getElementById('pageContainer');
+
+            // Build HTML
+            let html = '';
+
+            // Background image
+            if (currentState.bgImage) {
+                html += `<img src="${currentState.bgImage}" class="background-image-overlay" style="opacity: ${currentState.bgOpacity / 100};">`;
+            }
+
+            // Logo
+            if (currentState.logo) {
+                html += `<img src="${currentState.logo}" class="logo-overlay">`;
+            }
+
+            html += `
+                <div class="header">
+                    <div class="title">${currentState.mainTitle}</div>
+                    <div class="subtitle">${currentState.mainSubtitle}</div>
+                </div>
+                <div class="offers-grid count-${currentState.offersCount}">
+            `;
+
+            for (let i = 0; i < currentState.offersCount; i++) {
+                const offer = currentState.offers[i] || {};
+                html += `
+                    <div class="offer-card">
+                        <div class="offer-title">${offer.title || ''}</div>
+                        <div class="offer-description">${offer.description || ''}</div>
+                        <div class="offer-price">${offer.price || ''}</div>
+                    </div>
+                `;
+            }
+
+            html += `
+                </div>
+                <div class="footer">
+                    <div class="contact-info">${currentState.contactInfo}</div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            // Apply custom colors if set
+            applyCustomStyles();
+        }
+
+        // Custom colors
+        function updateCustomColors() {
+            currentState.customization.bgColor1 = document.getElementById('bgColor1').value;
+            currentState.customization.bgColor2 = document.getElementById('bgColor2').value;
+            currentState.customization.titleColor = document.getElementById('titleColor').value;
+            currentState.customization.textColor = document.getElementById('textColor').value;
+            currentState.customization.priceColor = document.getElementById('priceColor').value;
+
+            applyCustomStyles();
+        }
+
+        function updateCustomSizes() {
+            currentState.customization.titleSize = document.getElementById('titleSize').value;
+            document.getElementById('titleSizeValue').textContent = currentState.customization.titleSize;
+
+            applyCustomStyles();
+        }
+
+        function applyCustomStyles() {
+            const container = document.getElementById('pageContainer');
+            const { bgColor1, bgColor2, titleColor, textColor, priceColor, titleSize } = currentState.customization;
+
+            // Apply background gradient
+            container.style.background = `linear-gradient(135deg, ${bgColor1} 0%, ${bgColor2} 100%)`;
+
+            // Apply title color and size
+            const titleEl = container.querySelector('.title');
+            if (titleEl) {
+                titleEl.style.color = titleColor;
+                titleEl.style.fontSize = titleSize + 'px';
+            }
+
+            // Apply text color
+            const subtitleEl = container.querySelector('.subtitle');
+            if (subtitleEl) {
+                subtitleEl.style.color = textColor;
+            }
+
+            // Apply price color
+            container.querySelectorAll('.offer-price').forEach(el => {
+                el.style.color = priceColor;
+            });
+
+            // Apply offer title color
+            container.querySelectorAll('.offer-title').forEach(el => {
+                el.style.color = titleColor;
+            });
+        }
+
+        // Image uploads
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentState.logo = e.target.result;
+                    document.getElementById('logoPreview').src = e.target.result;
+                    document.getElementById('logoPreview').style.display = 'block';
+                    document.getElementById('logoUploadArea').classList.add('has-image');
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleBgImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentState.bgImage = e.target.result;
+                    document.getElementById('bgImagePreview').src = e.target.result;
+                    document.getElementById('bgImagePreview').style.display = 'block';
+                    document.getElementById('bgImageUploadArea').classList.add('has-image');
+                    document.getElementById('bgOpacityGroup').style.display = 'block';
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateBgOpacity() {
+            currentState.bgOpacity = document.getElementById('bgOpacity').value;
+            document.getElementById('bgOpacityValue').textContent = currentState.bgOpacity + '%';
+            updatePreview();
+        }
+
+        // Accordion
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const header = content.previousElementSibling;
+
+            content.classList.toggle('active');
+            header.classList.toggle('active');
+        }
+
+        // Save/Load templates
+        function saveTemplate() {
+            const name = document.getElementById('templateName').value || `Template_${Date.now()}`;
+
+            const templates = JSON.parse(localStorage.getItem('adCreatorTemplates') || '{}');
+            templates[name] = currentState;
+            localStorage.setItem('adCreatorTemplates', JSON.stringify(templates));
+
+            alert(currentState.language === 'el' ? 'Template αποθηκεύτηκε!' : 'Template saved!');
+            loadSavedTemplates();
+        }
+
+        function loadSavedTemplates() {
+            const templates = JSON.parse(localStorage.getItem('adCreatorTemplates') || '{}');
+            const container = document.getElementById('savedTemplatesList');
+
+            container.innerHTML = '';
+
+            Object.keys(templates).forEach(name => {
+                const item = document.createElement('div');
+                item.className = 'saved-template-item';
+                item.innerHTML = `
+                    <span class="saved-template-name">${name}</span>
+                    <div class="saved-template-actions">
+                        <button class="btn-icon" onclick="loadTemplateByName('${name}')">
+                            ${currentState.language === 'el' ? 'Φόρτωση' : 'Load'}
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deleteTemplate('${name}')">
+                            ${currentState.language === 'el' ? 'Διαγραφή' : 'Delete'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function loadTemplateByName(name) {
+            const templates = JSON.parse(localStorage.getItem('adCreatorTemplates') || '{}');
+            if (templates[name]) {
+                currentState = templates[name];
+
+                // Update all UI elements
+                document.getElementById('mainTitle').value = currentState.mainTitle;
+                document.getElementById('mainSubtitle').value = currentState.mainSubtitle;
+                document.getElementById('contactInfo').value = currentState.contactInfo;
+
+                selectTemplate(currentState.template);
+                setOffersCount(currentState.offersCount);
+
+                // Update customization inputs
+                document.getElementById('bgColor1').value = currentState.customization.bgColor1;
+                document.getElementById('bgColor2').value = currentState.customization.bgColor2;
+                document.getElementById('titleColor').value = currentState.customization.titleColor;
+                document.getElementById('textColor').value = currentState.customization.textColor;
+                document.getElementById('priceColor').value = currentState.customization.priceColor;
+                document.getElementById('titleSize').value = currentState.customization.titleSize;
+                document.getElementById('titleSizeValue').textContent = currentState.customization.titleSize;
+
+                updatePreview();
+            }
+        }
+
+        function deleteTemplate(name) {
+            if (confirm(currentState.language === 'el' ? 'Διαγραφή template;' : 'Delete template?')) {
+                const templates = JSON.parse(localStorage.getItem('adCreatorTemplates') || '{}');
+                delete templates[name];
+                localStorage.setItem('adCreatorTemplates', JSON.stringify(templates));
+                loadSavedTemplates();
+            }
+        }
+
+        function exportTemplate() {
+            const dataStr = JSON.stringify(currentState, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `template_${Date.now()}.json`;
+            link.click();
+        }
+
+        function importTemplate(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        currentState = imported;
+
+                        // Update UI
+                        document.getElementById('mainTitle').value = currentState.mainTitle;
+                        document.getElementById('mainSubtitle').value = currentState.mainSubtitle;
+                        document.getElementById('contactInfo').value = currentState.contactInfo;
+
+                        selectTemplate(currentState.template);
+                        setOffersCount(currentState.offersCount);
+
+                        updatePreview();
+
+                        alert(currentState.language === 'el' ? 'Template εισήχθη!' : 'Template imported!');
+                    } catch (err) {
+                        alert(currentState.language === 'el' ? 'Σφάλμα εισαγωγής!' : 'Import error!');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function resetTemplate() {
+            if (confirm(currentState.language === 'el' ? 'Επαναφορά σε προεπιλογές;' : 'Reset to defaults?')) {
+                currentState = {
+                    language: currentState.language,
+                    template: 'elegant',
+                    layoutType: 'single',
+                    bookletPages: 0,
+                    offersCount: 1,
+                    mainTitle: 'ΠΡΟΣΦΟΡΕΣ',
+                    mainSubtitle: 'Ειδικές προσφορές του μήνα',
+                    contactInfo: 'Τηλ: 210 123 4567 | info@example.gr',
+                    offers: [
+                        { title: 'Προσφορά 1', description: 'Περιγραφή της προσφοράς', price: '€19.99' }
+                    ],
+                    customization: {
+                        bgColor1: '#1a1a2e',
+                        bgColor2: '#2a2a4e',
+                        titleColor: '#d4af37',
+                        textColor: '#ffffff',
+                        priceColor: '#f4d03f',
+                        titleSize: 56
+                    },
+                    logo: null,
+                    bgImage: null,
+                    bgOpacity: 50
+                };
+
+                location.reload();
+            }
+        }
+
+        // Export functions
+        async function exportAsPDF() {
+            const element = document.getElementById('pageContainer');
+
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                backgroundColor: null,
+                logging: false
+            });
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`advertisement_${Date.now()}.pdf`);
+        }
+
+        async function exportAsInstagram() {
+            const element = document.getElementById('pageContainer');
+
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                backgroundColor: null,
+                logging: false,
+                width: 1080,
+                height: 1080
+            });
+
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `instagram_post_${Date.now()}.png`;
+                link.click();
+            });
+        }
+
+        async function exportBookletPDF() {
+            if (currentState.bookletPages === 0) {
+                alert(currentState.language === 'el' ? 'Επιλέξτε φυλλάδιο πρώτα!' : 'Select booklet first!');
+                return;
+            }
+
+            const element = document.getElementById('pageContainer');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            for (let i = 0; i < currentState.bookletPages; i++) {
+                if (i > 0) {
+                    pdf.addPage();
+                }
+
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    backgroundColor: null,
+                    logging: false
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            }
+
+            pdf.save(`booklet_${currentState.bookletPages}pages_${Date.now()}.pdf`);
+        }
+    </script>
+</body>
+</html>
