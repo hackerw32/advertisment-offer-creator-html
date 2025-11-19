@@ -1,8 +1,401 @@
+# 🎨 Advertisement Creator Suite
+
+**Professional Tools for Creating Advertisements, Brochures, and Promotional Materials**
+
+A comprehensive suite of web-based tools for creating stunning advertisements, promotional offers, marketing booklets, and professional brochures for businesses. Supports both Greek and English languages with full customization capabilities.
+
+---
+
+## 📚 Tools in This Suite
+
+### 1. 🎨 Unified Advertisement & Offer Creator (`unified-ad-creator.html`)
+Create stunning single-page advertisements and multi-page booklets with pre-designed templates.
+
+### 2. 📄 Professional Brochure Creator (`brochure-creator.html`) ⭐ NEW!
+Advanced multi-page brochure designer with Photoshop-like layer system, full customization, and 10+ professional templates.
+
+---
+
+# 📄 Professional Brochure Creator
+
+**Photoshop-Like Brochure Design Tool for Everyone**
+
+A powerful, web-based brochure creator that allows you to design professional 1-8 page brochures with a layer-based editing system. Perfect for creating marketing materials, catalogs, menus, and promotional brochures for any business.
+
+## ✨ Key Features
+
+### 🎯 Multi-Page Support
+- **1 Page** - Single-page flyer or poster
+- **2 Pages** - Front and back brochure
+- **4 Pages** - Booklet format (fold in half)
+- **8 Pages** - Professional catalog/magazine
+
+### 📐 Paper Sizes
+- **A4** (210mm × 297mm) - Standard letter size
+- **A5** (148mm × 210mm) - Half A4, perfect for flyers
+
+### 🎨 Professional Templates (10+)
+Ready-to-use templates for different industries:
+
+1. **Blank** - Start from scratch
+2. **Restaurant** - Menu & dining designs
+3. **Supermarket** - Weekly offers & promotions
+4. **Car Dealer** - Vehicle showcase layouts
+5. **Real Estate** - Property listing designs
+6. **Beauty Salon** - Services & pricing
+7. **Fitness Center** - Membership packages
+8. **Electronics** - Tech product catalogs
+9. **Fashion Store** - Clothing catalogs
+10. **Travel Agency** - Destination showcases
+11. **Education** - Course programs
+
+### 🖼️ Layer-Based Editing System
+Like Photoshop, but easier:
+- **Background Layer** - Full-page background images
+- **Image Layers** - Product photos, visuals
+- **Text Layers** - Fully customizable text elements
+- **Logo Layer** - Business branding
+- Drag and drop to position
+- Resize with handles
+- Layer ordering (bring to front/send to back)
+- Delete with one click
+
+### ✍️ Text Customization
+Full control over typography:
+- **Font Families**: Roboto, Montserrat, Playfair Display, Lora, Raleway, Open Sans
+- **Font Sizes**: Any size from 12px to 200px+
+- **Font Weights**: Light, Regular, Semi-Bold, Bold, Black
+- **Colors**: Any color with color picker
+- **Alignment**: Left, Center, Right, Justify
+- **Background Color**: Transparent or solid colors
+- Edit content in real-time
+
+### 🖼️ Image Management
+- **Upload Background Images** - Full-page backgrounds
+- **Upload Foreground Images** - Products, visuals
+- **Upload Logos** - Business branding
+- **Drag & Position** - Move anywhere on page
+- **Resize** - Scale to any size
+- **Multiple Images** - Add as many as needed
+
+### 📤 Export Options
+- **PDF Export** - Print-ready PDF in A4 or A5
+- **Image Export** - High-resolution PNG images
+- **Multi-Page PDF** - All pages in one document
+- **Individual Images** - Separate PNG for each page
+
+### 🌍 Bilingual Interface
+- **Greek (Ελληνικά)** - Full Greek interface
+- **English** - Complete English translation
+- One-click language switching
+
+## 🚀 How to Use the Brochure Creator
+
+### Getting Started
+
+1. **Open the Tool**
+   ```
+   Open brochure-creator.html in any modern web browser
+   ```
+
+2. **Select Language**
+   - Click "Ελληνικά" for Greek
+   - Click "English" for English
+
+3. **Choose Number of Pages**
+   - Click 1, 2, 4, or 8 for page count
+   - All pages shown in tabs at top
+
+4. **Select Paper Size**
+   - Click A4 for standard size
+   - Click A5 for smaller flyers
+
+5. **Choose a Template**
+   - Click any template from the list
+   - Template loads with sample content
+   - Customize to your needs
+
+### Creating Your Brochure
+
+#### Step 1: Add Elements
+
+**Add Text:**
+1. Click "📝 Text" button
+2. Text element appears on canvas
+3. Drag to position
+4. Click to select
+5. Edit properties in right panel
+
+**Add Images:**
+1. Click "🖼️ Image" for foreground images
+2. Click "🎨 Background" for full-page backgrounds
+3. Click "🏢 Logo" for your business logo
+4. Select file from computer
+5. Image appears on canvas
+6. Drag and resize as needed
+
+#### Step 2: Edit Elements
+
+**Editing Text:**
+1. Click on text element to select
+2. Right panel shows properties:
+   - Text content (edit directly)
+   - Font size
+   - Font family
+   - Text color
+   - Background color
+   - Font weight
+   - Text alignment
+   - Width & height
+3. Changes apply in real-time
+
+**Editing Images:**
+1. Click on image to select
+2. Drag to move
+3. Drag resize handle (bottom-right) to scale
+4. Click × button to delete
+
+#### Step 3: Layer Management
+
+**Understanding Layers:**
+- All elements shown in right sidebar
+- Top to bottom = front to back
+- Click layer to select element
+- Use ↑ and ↓ to reorder
+
+**Moving Layers:**
+- Click ↑ to bring forward
+- Click ↓ to send backward
+- Drag element on canvas to position
+
+#### Step 4: Multi-Page Editing
+
+**Working with Pages:**
+1. Switch pages using tabs at top
+2. Each page has its own elements
+3. Elements don't carry between pages
+4. Apply template to each page separately
+
+**Page Management:**
+- Page 1, Page 2, etc. tabs
+- Click tab to switch pages
+- Current page highlighted
+- Edit each page independently
+
+#### Step 5: Export Your Brochure
+
+**Export as PDF:**
+1. Click "📄 Export as PDF"
+2. Wait for processing
+3. PDF downloads automatically
+4. Contains all pages in order
+
+**Export as Images:**
+1. Click "🖼️ Export as Images"
+2. Wait for processing
+3. One PNG downloads per page
+4. Named: brochure-page-1.png, brochure-page-2.png, etc.
+
+### Advanced Features
+
+#### Zoom Controls
+- **🔍+** - Zoom in for detail work
+- **🔍-** - Zoom out for overview
+- **100%** - Reset to normal size
+
+#### Precise Positioning
+- Select element
+- Edit width/height in properties panel
+- Numbers in pixels for exact sizing
+
+#### Color Selection
+- Click color box for color picker
+- Or type hex code (#000000)
+- Supports transparent backgrounds
+
+## 🎯 Use Cases
+
+### Restaurants
+- **Menu Brochures** - 4-8 page food menus
+- **Takeout Menus** - 2-page flyers
+- **Special Events** - Catering packages
+
+### Supermarkets
+- **Weekly Flyers** - 2-4 page offers
+- **Product Catalogs** - 8-page booklets
+- **Seasonal Promotions** - Special deals
+
+### Car Dealerships
+- **Vehicle Catalogs** - 8-page showcases
+- **Financing Offers** - 2-page brochures
+- **Service Packages** - Maintenance deals
+
+### Real Estate
+- **Property Listings** - 4-8 page catalogs
+- **Agency Brochures** - Company info
+- **Investment Guides** - Market information
+
+### Beauty Salons
+- **Service Menus** - Treatment lists
+- **Package Deals** - Special offers
+- **Product Catalogs** - Retail items
+
+### Gyms & Fitness
+- **Membership Packages** - Pricing tiers
+- **Class Schedules** - Weekly programs
+- **Trainer Profiles** - Staff introduction
+
+### Electronics Stores
+- **Product Catalogs** - 8-page tech guides
+- **Special Offers** - Promotional flyers
+- **Warranty Info** - Service details
+
+### Fashion Stores
+- **Seasonal Catalogs** - New collections
+- **Lookbooks** - Style guides
+- **Sale Flyers** - Discount promotions
+
+### Travel Agencies
+- **Destination Guides** - Travel packages
+- **Tour Catalogs** - Trip options
+- **Seasonal Offers** - Holiday deals
+
+### Educational Institutions
+- **Course Catalogs** - Program listings
+- **Event Brochures** - School activities
+- **Admissions Info** - Application guides
+
+## 💡 Design Tips
+
+### Layout Best Practices
+
+1. **Keep it Clean**
+   - Don't overcrowd pages
+   - Use white space effectively
+   - Focus on key messages
+
+2. **Visual Hierarchy**
+   - Large titles for main messages
+   - Medium text for descriptions
+   - Small text for details
+
+3. **Consistency**
+   - Use same fonts across pages
+   - Maintain color scheme
+   - Similar layouts for flow
+
+4. **Images**
+   - Use high-quality images (300+ DPI)
+   - Ensure good contrast with text
+   - Align images to grid
+
+### Template Selection
+
+- **Simple templates** for beginners
+- **Complex templates** for professional look
+- Customize colors to match brand
+- Replace sample text with your content
+
+### Multi-Page Flow
+
+**2-Page Brochure:**
+- Page 1: Eye-catching cover
+- Page 2: Details and contact
+
+**4-Page Brochure:**
+- Page 1: Cover
+- Page 2-3: Main content
+- Page 4: Contact and call-to-action
+
+**8-Page Brochure:**
+- Page 1: Cover
+- Pages 2-7: Content sections
+- Page 8: Contact and branding
+
+## 🔧 Technical Details
+
+### Browser Compatibility
+- Chrome/Edge (Recommended)
+- Firefox
+- Safari
+- Opera
+
+### Dependencies
+- html2canvas v1.4.1 - Canvas rendering
+- jsPDF v2.5.1 - PDF generation
+- Google Fonts (6 font families)
+
+### Performance
+- Client-side processing only
+- No server required
+- No data sent anywhere
+- All work done in browser
+
+### File Support
+- **Image uploads**: JPG, PNG, GIF, WebP, BMP
+- **Export formats**: PDF, PNG
+- **Maximum file size**: Depends on browser (typically 10-50MB)
+
+## 📱 System Requirements
+
+**Recommended:**
+- Desktop or laptop computer
+- Screen resolution: 1920×1080 or higher
+- Modern browser (Chrome, Edge, Firefox)
+- 4GB+ RAM
+
+**Minimum:**
+- 1366×768 screen resolution
+- 2GB RAM
+- Updated browser
+
+## 🐛 Troubleshooting
+
+**Elements not dragging:**
+- Click element first to select
+- Ensure not clicking resize/delete handle
+- Try refreshing page
+
+**Export not working:**
+- Check popup blocker settings
+- Allow downloads from browser
+- Wait for processing to complete
+
+**Images not uploading:**
+- Check file format (JPG, PNG)
+- Reduce file size if very large
+- Try different browser
+
+**Text not updating:**
+- Click element to select
+- Edit in properties panel
+- Press Enter to apply
+
+**Pages not switching:**
+- Click page tab clearly
+- Wait for page to load
+- Check browser console for errors
+
+## ⚡ Performance Tips
+
+1. **Image Optimization**
+   - Compress images before upload
+   - Use web-optimized formats
+   - Keep under 5MB per image
+
+2. **Element Management**
+   - Delete unused elements
+   - Limit to 20-30 elements per page
+   - Use layers efficiently
+
+3. **Export Optimization**
+   - Close other browser tabs
+   - Export one page at a time if slow
+   - Clear browser cache if issues
+
+---
+
 # 🎨 Unified Advertisement & Offer Creator
-
-**All-in-One Tool for Creating Professional Advertisements and Promotional Materials**
-
-A comprehensive, web-based tool for creating stunning advertisements, promotional offers, and marketing booklets for businesses. Supports both Greek and English languages with full customization capabilities.
 
 ## ✨ Features
 
