@@ -374,8 +374,19 @@
 
         .page-canvas {
             position: relative;
-            background: #fff;
+            background: transparent;
             overflow: hidden;
+        }
+
+        .page-canvas::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: -999;
         }
 
         /* A4 and A5 sizes at 96 DPI */
@@ -547,6 +558,11 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+        }
+
+        .canvas-element.shape-element svg {
+            width: 100%;
+            height: 100%;
         }
 
         .resize-handle {
@@ -1025,8 +1041,10 @@
             currentPageCount = count;
             document.querySelectorAll('.page-count-btn').forEach(btn => {
                 btn.classList.remove('active');
+                if (btn.textContent === count.toString()) {
+                    btn.classList.add('active');
+                }
             });
-            event.target.classList.add('active');
 
             // Adjust pages array
             while (pages.length < count) {
@@ -1091,9 +1109,10 @@
                 canvas.classList.add(`template-${currentTemplate}`);
             }
 
-            // Render elements
+            // Render elements - sort by z-index to ensure proper layering
             const pageData = pages[currentPage];
-            pageData.elements.forEach(element => {
+            const sortedElements = [...pageData.elements].sort((a, b) => (a.zIndex || 1) - (b.zIndex || 1));
+            sortedElements.forEach(element => {
                 const el = createElementDOM(element);
                 canvas.appendChild(el);
             });
@@ -1102,6 +1121,58 @@
             container.appendChild(preview);
 
             updateLayers();
+        }
+
+        // SVG Shape Helpers
+        function createCurveShape(color, opacity = 0.3) {
+            return `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 0 200 Q 400 100 800 200 L 800 400 Q 400 300 0 400 Z" fill="${color}" opacity="${opacity}"/>
+            </svg>`;
+        }
+
+        function createWaveShape(color, opacity = 0.3) {
+            return `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 0 100 Q 200 50 400 100 T 800 100 L 800 200 Q 600 250 400 200 T 0 200 Z" fill="${color}" opacity="${opacity}"/>
+            </svg>`;
+        }
+
+        function createCirclePattern(color, opacity = 0.2) {
+            return `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="700" cy="100" r="150" fill="${color}" opacity="${opacity}"/>
+                <circle cx="100" cy="1000" r="200" fill="${color}" opacity="${opacity * 0.7}"/>
+            </svg>`;
+        }
+
+        function createDiagonalLines(color, opacity = 0.1) {
+            return `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="0" x2="800" y2="300" stroke="${color}" stroke-width="40" opacity="${opacity}"/>
+                <line x1="0" y1="200" x2="800" y2="500" stroke="${color}" stroke-width="40" opacity="${opacity}"/>
+            </svg>`;
+        }
+
+        function createGeometricPattern(color, opacity = 0.15) {
+            return `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="800,0 800,300 600,300" fill="${color}" opacity="${opacity}"/>
+                <polygon points="0,900 200,900 0,1200" fill="${color}" opacity="${opacity * 0.8}"/>
+                <circle cx="750" cy="1100" r="100" fill="${color}" opacity="${opacity * 0.6}"/>
+            </svg>`;
+        }
+
+        function createFloralCurves(color, opacity = 0.2) {
+            return `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 800 0 Q 600 200 800 400 Z" fill="${color}" opacity="${opacity}"/>
+                <path d="M 0 800 Q 200 1000 0 1200 Z" fill="${color}" opacity="${opacity}"/>
+                <circle cx="100" cy="100" r="80" fill="none" stroke="${color}" stroke-width="3" opacity="${opacity * 1.5}"/>
+                <circle cx="700" cy="1000" r="100" fill="none" stroke="${color}" stroke-width="3" opacity="${opacity * 1.5}"/>
+            </svg>`;
+        }
+
+        function createModernArcs(color, opacity = 0.25) {
+            return `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M -100 600 Q 200 400 400 600 T 900 600" fill="none" stroke="${color}" stroke-width="100" opacity="${opacity}"/>
+                <path d="M -100 200 Q 200 100 500 200" fill="none" stroke="${color}" stroke-width="60" opacity="${opacity * 0.7}"/>
+                <path d="M 300 1200 Q 500 1000 700 1200" fill="none" stroke="${color}" stroke-width="80" opacity="${opacity * 0.8}"/>
+            </svg>`;
         }
 
         // Template Management
@@ -1126,352 +1197,762 @@
         }
 
         function loadTemplateContent(template) {
-            // Clear current page
-            pages[currentPage].elements = [];
-
-            // Template configurations
+            // Template configurations - multi-page templates
             const templates = {
                 restaurant: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΕΣΤΙΑΤΟΡΙΟ' : 'RESTAURANT',
-                            x: 100,
-                            y: 80,
-                            width: 600,
-                            height: 80,
-                            fontSize: 64,
-                            fontFamily: 'Playfair Display',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΜΕΝΟΥ ΤΗΣ ΗΜΕΡΑΣ' : 'DAILY MENU',
-                            x: 100,
-                            y: 180,
-                            width: 600,
-                            height: 40,
-                            fontSize: 28,
-                            fontFamily: 'Montserrat',
-                            color: '#ffd700',
-                            fontWeight: '600',
-                            textAlign: 'center'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ?
-                                '• Σαλάτα Σεφ\n• Μοσχαράκι με λεμόνι\n• Ψάρι στη σχάρα\n• Παραδοσιακό γλυκό' :
-                                '• Chef\'s Salad\n• Lemon Veal\n• Grilled Fish\n• Traditional Dessert',
-                            x: 100,
-                            y: 300,
-                            width: 600,
-                            height: 300,
-                            fontSize: 24,
-                            fontFamily: 'Roboto',
-                            color: '#ffffff',
-                            fontWeight: '400',
-                            lineHeight: '1.8'
-                        }
+                    pageCount: 4,
+                    pages: [
+                        // Page 1: Cover
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createFloralCurves('#ffd700', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΕΣΤΙΑΤΟΡΙΟ' : 'RESTAURANT',
+                                x: 100,
+                                y: 400,
+                                width: 594,
+                                height: 100,
+                                fontSize: 72,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '900',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'Γεύσεις που θυμάστε' : 'Tastes you remember',
+                                x: 150,
+                                y: 520,
+                                width: 494,
+                                height: 50,
+                                fontSize: 28,
+                                fontFamily: 'Montserrat',
+                                color: '#ffd700',
+                                fontWeight: '400',
+                                textAlign: 'center',
+                                fontStyle: 'italic',
+                                zIndex: 10
+                            }
+                        ],
+                        // Page 2: Appetizers
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createWaveShape('#8b0000', 0.15),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΟΡΕΚΤΙΚΑ' : 'APPETIZERS',
+                                x: 80,
+                                y: 60,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Σαλάτα Σεφ ................................. 8€\nΤζατζίκι με ψωμί ......................... 5€\nΣπανακόπιτα ................................. 6€\nΚολοκυθοκεφτέδες .................... 7€' :
+                                    'Chef Salad ................................. 8€\nTzatziki with bread .................... 5€\nSpinach pie ................................. 6€\nZucchini fritters ......................... 7€',
+                                x: 100,
+                                y: 180,
+                                width: 594,
+                                height: 250,
+                                fontSize: 24,
+                                fontFamily: 'Roboto',
+                                color: '#ffffff',
+                                fontWeight: '400',
+                                lineHeight: '2',
+                                zIndex: 10
+                            }
+                        ],
+                        // Page 3: Main Courses
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createCurveShape('#8b0000', 0.15),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΚΥΡΙΑ ΠΙΑΤΑ' : 'MAIN COURSES',
+                                x: 80,
+                                y: 60,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Μοσχαράκι λεμονάτο ............... 16€\nΨάρι στη σχάρα ......................... 18€\nΚοτόπουλο σουβλάκι ................ 12€\nΜουσακάς .................................... 14€' :
+                                    'Lemon veal ................................. 16€\nGrilled fish ................................. 18€\nChicken souvlaki ....................... 12€\nMoussaka .................................... 14€',
+                                x: 100,
+                                y: 180,
+                                width: 594,
+                                height: 250,
+                                fontSize: 24,
+                                fontFamily: 'Roboto',
+                                color: '#ffffff',
+                                fontWeight: '400',
+                                lineHeight: '2',
+                                zIndex: 10
+                            }
+                        ],
+                        // Page 4: Desserts & Contact
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createFloralCurves('#ffd700', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΓΛΥΚΑ' : 'DESSERTS',
+                                x: 80,
+                                y: 60,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Μπακλαβάς .................................... 6€\nΠαγωτό .......................................... 5€\nΓαλακτομπούρεκο ........................ 6€' :
+                                    'Baklava ........................................ 6€\nIce cream ..................................... 5€\nGalaktoboureko ........................... 6€',
+                                x: 100,
+                                y: 180,
+                                width: 594,
+                                height: 200,
+                                fontSize: 24,
+                                fontFamily: 'Roboto',
+                                color: '#ffffff',
+                                fontWeight: '400',
+                                lineHeight: '2',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Κρατήσεις: 210-1234567\nwww.restaurant.gr' :
+                                    'Reservations: 210-1234567\nwww.restaurant.gr',
+                                x: 150,
+                                y: 900,
+                                width: 494,
+                                height: 100,
+                                fontSize: 22,
+                                fontFamily: 'Montserrat',
+                                color: '#ffd700',
+                                fontWeight: '600',
+                                textAlign: 'center',
+                                lineHeight: '1.8',
+                                zIndex: 10
+                            }
+                        ]
                     ]
                 },
                 market: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΠΡΟΣΦΟΡΕΣ ΕΒΔΟΜΑΔΑΣ' : 'WEEKLY OFFERS',
-                            x: 80,
-                            y: 60,
-                            width: 640,
-                            height: 70,
-                            fontSize: 56,
-                            fontFamily: 'Montserrat',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΕΚΠΤΩΣΕΙΣ ΕΩΣ 50%' : 'DISCOUNTS UP TO 50%',
-                            x: 80,
-                            y: 140,
-                            width: 640,
-                            height: 50,
-                            fontSize: 36,
-                            fontFamily: 'Roboto',
-                            color: '#ffff00',
-                            fontWeight: '700',
-                            textAlign: 'center'
-                        }
+                    pageCount: 3,
+                    pages: [
+                        // Page 1: Cover
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createGeometricPattern('#ffff00', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΠΡΟΣΦΟΡΕΣ' : 'SPECIAL OFFERS',
+                                x: 80,
+                                y: 350,
+                                width: 634,
+                                height: 100,
+                                fontSize: 68,
+                                fontFamily: 'Montserrat',
+                                color: '#ffffff',
+                                fontWeight: '900',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΕΚΠΤΩΣΕΙΣ ΕΩΣ 50%' : 'DISCOUNTS UP TO 50%',
+                                x: 100,
+                                y: 470,
+                                width: 594,
+                                height: 70,
+                                fontSize: 42,
+                                fontFamily: 'Roboto',
+                                color: '#ffff00',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            }
+                        ],
+                        // Page 2: Food Offers
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createModernArcs('#00b300', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΤΡΟΦΙΜΑ' : 'GROCERIES',
+                                x: 80,
+                                y: 60,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Montserrat',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Γάλα 1.5L .................................. -30%\nΨωμί Ολικής ............................. -25%\nΦρέσκα Λαχανικά ..................... -40%\nΦρούτα Εποχής ....................... -35%\nΤυρί Φέτα 400g ....................... -20%' :
+                                    'Milk 1.5L ................................... -30%\nWhole Wheat Bread ................. -25%\nFresh Vegetables ..................... -40%\nSeasonal Fruits ........................ -35%\nFeta Cheese 400g .................... -20%',
+                                x: 100,
+                                y: 180,
+                                width: 594,
+                                height: 350,
+                                fontSize: 28,
+                                fontFamily: 'Roboto',
+                                color: '#ffffff',
+                                fontWeight: '600',
+                                lineHeight: '2',
+                                zIndex: 10
+                            }
+                        ],
+                        // Page 3: Household & Contact
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createCirclePattern('#00b300', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΟΙΚΙΑΚΑ ΕΙΔΗ' : 'HOUSEHOLD ITEMS',
+                                x: 80,
+                                y: 60,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Montserrat',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Απορρυπαντικό ........................ -45%\nΧαρτί Υγείας 12ρολο ............... -30%\nΣφουγγαρίστρα ....................... -25%' :
+                                    'Detergent ................................. -45%\nToilet Paper 12-pack ............... -30%\nMop Set .................................... -25%',
+                                x: 100,
+                                y: 180,
+                                width: 594,
+                                height: 250,
+                                fontSize: 28,
+                                fontFamily: 'Roboto',
+                                color: '#ffffff',
+                                fontWeight: '600',
+                                lineHeight: '2',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Ισχύει έως: 30/12/2024\nΤηλ: 210-9876543' :
+                                    'Valid until: 30/12/2024\nTel: 210-9876543',
+                                x: 150,
+                                y: 900,
+                                width: 494,
+                                height: 100,
+                                fontSize: 22,
+                                fontFamily: 'Montserrat',
+                                color: '#ffff00',
+                                fontWeight: '600',
+                                textAlign: 'center',
+                                lineHeight: '1.8',
+                                zIndex: 10
+                            }
+                        ]
                     ]
                 },
                 car: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΑΥΤΟΚΙΝΗΤΑ' : 'AUTOMOBILES',
-                            x: 100,
-                            y: 100,
-                            width: 600,
-                            height: 80,
-                            fontSize: 72,
-                            fontFamily: 'Montserrat',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center',
-                            letterSpacing: '4px'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'Η καλύτερη επιλογή σας' : 'Your best choice',
-                            x: 100,
-                            y: 190,
-                            width: 600,
-                            height: 40,
-                            fontSize: 24,
-                            fontFamily: 'Roboto',
-                            color: '#cccccc',
-                            fontWeight: '300',
-                            textAlign: 'center'
-                        }
+                    pageCount: 2,
+                    pages: [
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createDiagonalLines('#cccccc', 0.15),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΑΥΤΟΚΙΝΗΤΑ' : 'AUTOMOBILES',
+                                x: 100,
+                                y: 400,
+                                width: 594,
+                                height: 100,
+                                fontSize: 72,
+                                fontFamily: 'Montserrat',
+                                color: '#ffffff',
+                                fontWeight: '900',
+                                textAlign: 'center',
+                                letterSpacing: '4px',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'Η καλύτερη επιλογή σας' : 'Your best choice',
+                                x: 100,
+                                y: 520,
+                                width: 594,
+                                height: 50,
+                                fontSize: 24,
+                                fontFamily: 'Roboto',
+                                color: '#cccccc',
+                                fontWeight: '300',
+                                textAlign: 'center',
+                                zIndex: 10
+                            }
+                        ],
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createModernArcs('#666666', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΔΙΑΘΕΣΙΜΑ ΜΟΝΤΕΛΑ' : 'AVAILABLE MODELS',
+                                x: 80,
+                                y: 60,
+                                width: 634,
+                                height: 60,
+                                fontSize: 42,
+                                fontFamily: 'Montserrat',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Sedan - Από 15.000€\nSUV - Από 22.000€\nHybrid - Από 18.000€\n\nΤηλ: 210-5555555' :
+                                    'Sedan - From €15,000\nSUV - From €22,000\nHybrid - From €18,000\n\nTel: 210-5555555',
+                                x: 100,
+                                y: 200,
+                                width: 594,
+                                height: 300,
+                                fontSize: 28,
+                                fontFamily: 'Roboto',
+                                color: '#ffffff',
+                                fontWeight: '400',
+                                lineHeight: '2',
+                                textAlign: 'center',
+                                zIndex: 10
+                            }
+                        ]
                     ]
                 },
                 realestate: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΑΚΙΝΗΤΑ' : 'REAL ESTATE',
-                            x: 100,
-                            y: 80,
-                            width: 600,
-                            height: 70,
-                            fontSize: 64,
-                            fontFamily: 'Playfair Display',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ?
-                                'Βρείτε το ιδανικό σπίτι σας' :
-                                'Find your ideal home',
-                            x: 100,
-                            y: 160,
-                            width: 600,
-                            height: 40,
-                            fontSize: 28,
-                            fontFamily: 'Roboto',
-                            color: '#87ceeb',
-                            fontWeight: '400',
-                            textAlign: 'center'
-                        }
+                    pageCount: 3,
+                    pages: [
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createModernArcs('#87ceeb', 0.25),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΑΚΙΝΗΤΑ' : 'REAL ESTATE',
+                                x: 100,
+                                y: 400,
+                                width: 594,
+                                height: 80,
+                                fontSize: 64,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '900',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'Βρείτε το ιδανικό σπίτι σας' : 'Find your ideal home',
+                                x: 100,
+                                y: 500,
+                                width: 594,
+                                height: 50,
+                                fontSize: 28,
+                                fontFamily: 'Roboto',
+                                color: '#87ceeb',
+                                fontWeight: '400',
+                                textAlign: 'center',
+                                zIndex: 10
+                            }
+                        ],
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createGeometricPattern('#006d9c', 0.15),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΔΙΑΜΕΡΙΣΜΑΤΑ' : 'APARTMENTS',
+                                x: 80,
+                                y: 60,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    '2άρι 65τμ - Κέντρο ........... 120.000€\n3άρι 90τμ - Προάστια ...... 150.000€\nΡετιρέ 120τμ - Θέα .......... 250.000€' :
+                                    '2BR 65sqm - Center ......... €120,000\n3BR 90sqm - Suburbs ...... €150,000\nPenthouse 120sqm - View . €250,000',
+                                x: 100,
+                                y: 180,
+                                width: 594,
+                                height: 250,
+                                fontSize: 24,
+                                fontFamily: 'Roboto',
+                                color: '#ffffff',
+                                fontWeight: '400',
+                                lineHeight: '2',
+                                zIndex: 10
+                            }
+                        ],
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createCirclePattern('#87ceeb', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΕΠΙΚΟΙΝΩΝΙΑ' : 'CONTACT',
+                                x: 80,
+                                y: 400,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Τηλ: 210-1111111\nEmail: info@realestate.gr\nwww.realestate.gr' :
+                                    'Tel: 210-1111111\nEmail: info@realestate.gr\nwww.realestate.gr',
+                                x: 150,
+                                y: 500,
+                                width: 494,
+                                height: 150,
+                                fontSize: 24,
+                                fontFamily: 'Montserrat',
+                                color: '#87ceeb',
+                                fontWeight: '600',
+                                textAlign: 'center',
+                                lineHeight: '2',
+                                zIndex: 10
+                            }
+                        ]
                     ]
                 },
                 beauty: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΟΜΟΡΦΙΑ' : 'BEAUTY',
-                            x: 100,
-                            y: 100,
-                            width: 600,
-                            height: 80,
-                            fontSize: 68,
-                            fontFamily: 'Playfair Display',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ?
-                                'Υπηρεσίες κομμωτηρίου & αισθητικής' :
-                                'Hair & beauty services',
-                            x: 100,
-                            y: 190,
-                            width: 600,
-                            height: 40,
-                            fontSize: 24,
-                            fontFamily: 'Montserrat',
-                            color: '#ffc0cb',
-                            fontWeight: '400',
-                            textAlign: 'center'
-                        }
+                    pageCount: 3,
+                    pages: [
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createFloralCurves('#ffc0cb', 0.25),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΟΜΟΡΦΙΑ' : 'BEAUTY',
+                                x: 100,
+                                y: 400,
+                                width: 594,
+                                height: 90,
+                                fontSize: 68,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '900',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'Υπηρεσίες κομμωτηρίου & αισθητικής' : 'Hair & beauty services',
+                                x: 100,
+                                y: 510,
+                                width: 594,
+                                height: 50,
+                                fontSize: 24,
+                                fontFamily: 'Montserrat',
+                                color: '#ffc0cb',
+                                fontWeight: '400',
+                                textAlign: 'center',
+                                zIndex: 10
+                            }
+                        ],
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createWaveShape('#8a0060', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΥΠΗΡΕΣΙΕΣ' : 'SERVICES',
+                                x: 80,
+                                y: 60,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Κούρεμα ................................. 20€\nΧτένισμα ................................. 35€\nΒαφή ........................................ 50€\nΜανικιούρ .............................. 25€\nΠεντικιούρ ............................. 30€' :
+                                    'Haircut ................................... €20\nStyling ................................... €35\nColoring ................................. €50\nManicure ................................ €25\nPedicure ................................ €30',
+                                x: 100,
+                                y: 180,
+                                width: 594,
+                                height: 350,
+                                fontSize: 26,
+                                fontFamily: 'Roboto',
+                                color: '#ffffff',
+                                fontWeight: '400',
+                                lineHeight: '2',
+                                zIndex: 10
+                            }
+                        ],
+                        [
+                            {
+                                type: 'shape',
+                                svgContent: createCirclePattern('#ffc0cb', 0.2),
+                                x: 0,
+                                y: 0,
+                                width: 794,
+                                height: 1123,
+                                zIndex: 1
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ? 'ΡΑΝΤΕΒΟΥ' : 'APPOINTMENTS',
+                                x: 80,
+                                y: 400,
+                                width: 634,
+                                height: 60,
+                                fontSize: 48,
+                                fontFamily: 'Playfair Display',
+                                color: '#ffffff',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                zIndex: 10
+                            },
+                            {
+                                type: 'text',
+                                content: currentLang === 'el' ?
+                                    'Τηλ: 210-2222222\nΔευ-Σαβ: 9:00-21:00' :
+                                    'Tel: 210-2222222\nMon-Sat: 9:00-21:00',
+                                x: 150,
+                                y: 500,
+                                width: 494,
+                                height: 120,
+                                fontSize: 26,
+                                fontFamily: 'Montserrat',
+                                color: '#ffc0cb',
+                                fontWeight: '600',
+                                textAlign: 'center',
+                                lineHeight: '2',
+                                zIndex: 10
+                            }
+                        ]
                     ]
                 },
                 gym: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'FITNESS' : 'FITNESS',
-                            x: 100,
-                            y: 100,
-                            width: 600,
-                            height: 90,
-                            fontSize: 76,
-                            fontFamily: 'Montserrat',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center',
-                            letterSpacing: '6px'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ?
-                                'Γίνε η καλύτερη εκδοχή του εαυτού σου' :
-                                'Become the best version of yourself',
-                            x: 100,
-                            y: 200,
-                            width: 600,
-                            height: 40,
-                            fontSize: 22,
-                            fontFamily: 'Roboto',
-                            color: '#ffa500',
-                            fontWeight: '600',
-                            textAlign: 'center'
-                        }
+                    pageCount: 2,
+                    pages: [
+                        [{type: 'shape', svgContent: createDiagonalLines('#ffa500', 0.2), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: 'FITNESS', x: 100, y: 400, width: 594, height: 90, fontSize: 76, fontFamily: 'Montserrat', color: '#ffffff', fontWeight: '900', textAlign: 'center', letterSpacing: '6px', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Γίνε η καλύτερη εκδοχή του εαυτού σου' : 'Become the best version of yourself', x: 100, y: 510, width: 594, height: 50, fontSize: 22, fontFamily: 'Roboto', color: '#ffa500', fontWeight: '600', textAlign: 'center', zIndex: 10}],
+                        [{type: 'shape', svgContent: createModernArcs('#5d3b00', 0.2), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΣΥΝΔΡΟΜΕΣ' : 'MEMBERSHIPS', x: 80, y: 60, width: 634, height: 60, fontSize: 48, fontFamily: 'Montserrat', color: '#ffffff', fontWeight: '700', textAlign: 'center', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Μηνιαία ...................................... 40€\nΤριμηνιαία .................................. 100€\nΕτήσια ....................................... 350€\n\nΤηλ: 210-3333333' : 'Monthly ..................................... €40\n3 Months ................................... €100\nAnnual ...................................... €350\n\nTel: 210-3333333', x: 100, y: 180, width: 594, height: 350, fontSize: 26, fontFamily: 'Roboto', color: '#ffffff', fontWeight: '400', lineHeight: '2', textAlign: 'center', zIndex: 10}]
                     ]
                 },
                 tech: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΤΕΧΝΟΛΟΓΙΑ' : 'TECHNOLOGY',
-                            x: 100,
-                            y: 90,
-                            width: 600,
-                            height: 80,
-                            fontSize: 64,
-                            fontFamily: 'Montserrat',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ?
-                                'Τα νεότερα προϊόντα στις καλύτερες τιμές' :
-                                'Latest products at best prices',
-                            x: 100,
-                            y: 180,
-                            width: 600,
-                            height: 40,
-                            fontSize: 24,
-                            fontFamily: 'Roboto',
-                            color: '#00bfff',
-                            fontWeight: '400',
-                            textAlign: 'center'
-                        }
+                    pageCount: 2,
+                    pages: [
+                        [{type: 'shape', svgContent: createGeometricPattern('#00bfff', 0.2), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΤΕΧΝΟΛΟΓΙΑ' : 'TECHNOLOGY', x: 100, y: 400, width: 594, height: 80, fontSize: 64, fontFamily: 'Montserrat', color: '#ffffff', fontWeight: '900', textAlign: 'center', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Τα νεότερα προϊόντα στις καλύτερες τιμές' : 'Latest products at best prices', x: 100, y: 500, width: 594, height: 50, fontSize: 24, fontFamily: 'Roboto', color: '#00bfff', fontWeight: '400', textAlign: 'center', zIndex: 10}],
+                        [{type: 'shape', svgContent: createCirclePattern('#003d73', 0.2), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΠΡΟΪΟΝΤΑ' : 'PRODUCTS', x: 80, y: 60, width: 634, height: 60, fontSize: 48, fontFamily: 'Montserrat', color: '#ffffff', fontWeight: '700', textAlign: 'center', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Laptop από ............................ 499€\nSmartphone από .................. 299€\nTablet από ............................. 199€' : 'Laptop from .......................... €499\nSmartphone from ................ €299\nTablet from ........................... €199', x: 100, y: 180, width: 594, height: 250, fontSize: 26, fontFamily: 'Roboto', color: '#ffffff', fontWeight: '400', lineHeight: '2', zIndex: 10}]
                     ]
                 },
                 fashion: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΜΟΔΑ' : 'FASHION',
-                            x: 100,
-                            y: 100,
-                            width: 600,
-                            height: 80,
-                            fontSize: 72,
-                            fontFamily: 'Playfair Display',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center',
-                            fontStyle: 'italic'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ?
-                                'Νέα Collection' :
-                                'New Collection',
-                            x: 100,
-                            y: 190,
-                            width: 600,
-                            height: 40,
-                            fontSize: 32,
-                            fontFamily: 'Montserrat',
-                            color: '#da70d6',
-                            fontWeight: '600',
-                            textAlign: 'center'
-                        }
+                    pageCount: 2,
+                    pages: [
+                        [{type: 'shape', svgContent: createFloralCurves('#da70d6', 0.25), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΜΟΔΑ' : 'FASHION', x: 100, y: 400, width: 594, height: 80, fontSize: 72, fontFamily: 'Playfair Display', color: '#ffffff', fontWeight: '900', textAlign: 'center', fontStyle: 'italic', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Νέα Collection' : 'New Collection', x: 100, y: 500, width: 594, height: 50, fontSize: 32, fontFamily: 'Montserrat', color: '#da70d6', fontWeight: '600', textAlign: 'center', zIndex: 10}],
+                        [{type: 'shape', svgContent: createWaveShape('#5d005d', 0.2), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΕΚΠΤΩΣΕΙΣ' : 'SALE', x: 80, y: 300, width: 634, height: 80, fontSize: 64, fontFamily: 'Playfair Display', color: '#ffffff', fontWeight: '700', textAlign: 'center', zIndex: 10},
+                         {type: 'text', content: '-30%', x: 200, y: 450, width: 394, height: 120, fontSize: 96, fontFamily: 'Montserrat', color: '#da70d6', fontWeight: '900', textAlign: 'center', zIndex: 10}]
                     ]
                 },
                 travel: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΤΑΞΙΔΙΑ' : 'TRAVEL',
-                            x: 100,
-                            y: 90,
-                            width: 600,
-                            height: 80,
-                            fontSize: 68,
-                            fontFamily: 'Montserrat',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center',
-                            letterSpacing: '8px'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ?
-                                'Ανακαλύψτε τον κόσμο μαζί μας' :
-                                'Discover the world with us',
-                            x: 100,
-                            y: 180,
-                            width: 600,
-                            height: 40,
-                            fontSize: 26,
-                            fontFamily: 'Roboto',
-                            color: '#87ceeb',
-                            fontWeight: '400',
-                            textAlign: 'center'
-                        }
+                    pageCount: 2,
+                    pages: [
+                        [{type: 'shape', svgContent: createModernArcs('#87ceeb', 0.3), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΤΑΞΙΔΙΑ' : 'TRAVEL', x: 100, y: 400, width: 594, height: 80, fontSize: 68, fontFamily: 'Montserrat', color: '#ffffff', fontWeight: '900', textAlign: 'center', letterSpacing: '8px', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Ανακαλύψτε τον κόσμο μαζί μας' : 'Discover the world with us', x: 100, y: 500, width: 594, height: 50, fontSize: 26, fontFamily: 'Roboto', color: '#87ceeb', fontWeight: '400', textAlign: 'center', zIndex: 10}],
+                        [{type: 'shape', svgContent: createCirclePattern('#004466', 0.2), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΠΡΟΟΡΙΣΜΟΙ' : 'DESTINATIONS', x: 80, y: 60, width: 634, height: 60, fontSize: 48, fontFamily: 'Montserrat', color: '#ffffff', fontWeight: '700', textAlign: 'center', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Ελλάδα από ......................... 199€\nΕυρώπη από ......................... 299€\nΕξωτικοί προορισμοί από ... 799€' : 'Greece from ......................... €199\nEurope from ......................... €299\nExotic destinations from ..... €799', x: 100, y: 180, width: 594, height: 300, fontSize: 26, fontFamily: 'Roboto', color: '#ffffff', fontWeight: '400', lineHeight: '2', zIndex: 10}]
                     ]
                 },
                 education: {
-                    elements: [
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ? 'ΕΚΠΑΙΔΕΥΣΗ' : 'EDUCATION',
-                            x: 100,
-                            y: 100,
-                            width: 600,
-                            height: 80,
-                            fontSize: 64,
-                            fontFamily: 'Montserrat',
-                            color: '#ffffff',
-                            fontWeight: '900',
-                            textAlign: 'center'
-                        },
-                        {
-                            type: 'text',
-                            content: currentLang === 'el' ?
-                                'Μάθετε κάτι νέο κάθε μέρα' :
-                                'Learn something new every day',
-                            x: 100,
-                            y: 190,
-                            width: 600,
-                            height: 40,
-                            fontSize: 24,
-                            fontFamily: 'Roboto',
-                            color: '#ffd700',
-                            fontWeight: '400',
-                            textAlign: 'center'
-                        }
+                    pageCount: 2,
+                    pages: [
+                        [{type: 'shape', svgContent: createGeometricPattern('#ffd700', 0.2), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΕΚΠΑΙΔΕΥΣΗ' : 'EDUCATION', x: 100, y: 400, width: 594, height: 80, fontSize: 64, fontFamily: 'Montserrat', color: '#ffffff', fontWeight: '900', textAlign: 'center', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Μάθετε κάτι νέο κάθε μέρα' : 'Learn something new every day', x: 100, y: 500, width: 594, height: 50, fontSize: 24, fontFamily: 'Roboto', color: '#ffd700', fontWeight: '400', textAlign: 'center', zIndex: 10}],
+                        [{type: 'shape', svgContent: createModernArcs('#3a3a00', 0.2), x: 0, y: 0, width: 794, height: 1123, zIndex: 1},
+                         {type: 'text', content: currentLang === 'el' ? 'ΠΡΟΓΡΑΜΜΑΤΑ' : 'PROGRAMS', x: 80, y: 60, width: 634, height: 60, fontSize: 48, fontFamily: 'Montserrat', color: '#ffffff', fontWeight: '700', textAlign: 'center', zIndex: 10},
+                         {type: 'text', content: currentLang === 'el' ? 'Αγγλικά ................................... 150€/μήνα\nΠληροφορική ........................ 200€/μήνα\nΜουσική ................................. 180€/μήνα' : 'English .................................. €150/mo\nComputing ............................ €200/mo\nMusic ..................................... €180/mo', x: 100, y: 180, width: 594, height: 300, fontSize: 26, fontFamily: 'Roboto', color: '#ffffff', fontWeight: '400', lineHeight: '2', zIndex: 10}]
                     ]
                 }
             };
 
+            // Apply multi-page template
             if (template !== 'blank' && templates[template]) {
-                pages[currentPage].elements = templates[template].elements.map(el => ({
-                    ...el,
-                    id: `element-${elementIdCounter++}`,
-                    zIndex: elementIdCounter
-                }));
+                const templateConfig = templates[template];
+
+                // Set page count
+                if (templateConfig.pageCount) {
+                    setPageCount(templateConfig.pageCount);
+                }
+
+                // Load content for all pages
+                if (templateConfig.pages) {
+                    templateConfig.pages.forEach((pageElements, pageIndex) => {
+                        if (pages[pageIndex]) {
+                            pages[pageIndex].elements = pageElements.map(el => ({
+                                ...el,
+                                id: `element-${elementIdCounter++}`,
+                                zIndex: el.zIndex || elementIdCounter
+                            }));
+                        }
+                    });
+                }
             }
 
             renderCurrentPage();
@@ -1534,7 +2015,7 @@
                             y: 0,
                             width: width,
                             height: height,
-                            zIndex: -1
+                            zIndex: 0
                         };
                     } else {
                         // Regular image or logo
@@ -1589,6 +2070,13 @@
                 el.style.lineHeight = element.lineHeight || '1.4';
                 el.style.letterSpacing = element.letterSpacing || '0px';
                 if (element.fontStyle) el.style.fontStyle = element.fontStyle;
+            } else if (element.type === 'shape') {
+                // SVG shape element
+                el.classList.add('shape-element');
+                el.innerHTML = element.svgContent;
+                if (element.opacity) {
+                    el.style.opacity = element.opacity;
+                }
             } else {
                 // Image, logo, or background
                 el.classList.add('image-element');
@@ -1597,8 +2085,10 @@
                 el.appendChild(img);
 
                 if (element.type === 'background') {
-                    el.style.zIndex = -1;
+                    el.style.zIndex = 0;
                     img.style.objectFit = 'cover';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
                 }
             }
 
