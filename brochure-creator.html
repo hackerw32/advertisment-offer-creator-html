@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Brochure Creator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@300;400;600;700;800;900&family=Lora:wght@400;700&family=Raleway:wght@300;400;600;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d1b4e 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Left Sidebar - Controls */
+        .left-sidebar {
+            width: 320px;
+            background: #0a1929;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .left-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .left-sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .left-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 4px;
+        }
+
+        .logo-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: #fff;
+            margin-bottom: 5px;
+            font-weight: 900;
+        }
+
+        .logo-header p {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
+        .lang-toggle {
+            display: flex;
+            gap: 8px;
+            margin: 15px;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #fff;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .control-section {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .page-count-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .page-count-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .page-count-btn:hover {
+            border-color: #6366f1;
+            transform: scale(1.05);
+        }
+
+        .page-count-btn.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .size-btn {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .size-btn:hover {
+            border-color: #6366f1;
+        }
+
+        .size-btn.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: #6366f1;
+        }
+
+        .template-scroll {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .template-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .template-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .template-scroll::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 3px;
+        }
+
+        .template-item {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+
+        .template-item:hover {
+            border-color: #6366f1;
+            transform: translateX(4px);
+        }
+
+        .template-item.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #6366f1;
+        }
+
+        .template-item h4 {
+            font-size: 13px;
+            color: #6366f1;
+            margin-bottom: 4px;
+        }
+
+        .template-item p {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #132337;
+            overflow: hidden;
+        }
+
+        .canvas-header {
+            background: #0a1929;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .canvas-header h2 {
+            font-size: 16px;
+            color: #6366f1;
+            font-weight: 700;
+        }
+
+        .canvas-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pages-nav {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .page-tab {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .page-tab:hover {
+            border-color: #6366f1;
+        }
+
+        .page-tab.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: #6366f1;
+        }
+
+        .canvas-content {
+            flex: 1;
+            overflow: auto;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .canvas-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .canvas-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .canvas-content::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 6px;
+        }
+
+        .preview-container {
+            background: #fff;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+
+        .page-canvas {
+            position: relative;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        /* A4 and A5 sizes at 96 DPI */
+        .page-canvas.a4 {
+            width: 794px;
+            height: 1123px;
+        }
+
+        .page-canvas.a5 {
+            width: 559px;
+            height: 794px;
+        }
+
+        /* Right Sidebar - Layers & Properties */
+        .right-sidebar {
+            width: 300px;
+            background: #0a1929;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .right-sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .right-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 4px;
+        }
+
+        .layers-section {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .layer-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .layer-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #6366f1;
+        }
+
+        .layer-item.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #6366f1;
+        }
+
+        .layer-name {
+            font-size: 12px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .layer-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .layer-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .layer-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .add-element-section {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .element-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .element-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .element-btn:hover {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        .properties-section {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .color-picker-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input {
+            width: 50px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .color-input:hover {
+            border-color: #6366f1;
+        }
+
+        /* Canvas Elements */
+        .canvas-element {
+            position: absolute;
+            cursor: move;
+            border: 2px dashed transparent;
+            transition: border 0.2s;
+        }
+
+        .canvas-element:hover {
+            border-color: #6366f1;
+        }
+
+        .canvas-element.selected {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .canvas-element.text-element {
+            padding: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .canvas-element.image-element img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #6366f1;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            bottom: -6px;
+            right: -6px;
+            cursor: nwse-resize;
+            display: none;
+        }
+
+        .canvas-element.selected .resize-handle {
+            display: block;
+        }
+
+        .delete-handle {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            top: -12px;
+            right: -12px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .canvas-element.selected .delete-handle {
+            display: flex;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #0a1929;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Template Styles */
+        .template-restaurant {
+            background: linear-gradient(135deg, #1a0000 0%, #4a0000 100%);
+        }
+
+        .template-market {
+            background: linear-gradient(135deg, #004d00 0%, #00b300 100%);
+        }
+
+        .template-car {
+            background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
+        }
+
+        .template-realestate {
+            background: linear-gradient(135deg, #003d5c 0%, #006d9c 100%);
+        }
+
+        .template-beauty {
+            background: linear-gradient(135deg, #4a0033 0%, #8a0060 100%);
+        }
+
+        .template-gym {
+            background: linear-gradient(135deg, #2d1b00 0%, #5d3b00 100%);
+        }
+
+        .template-tech {
+            background: linear-gradient(135deg, #001a33 0%, #003d73 100%);
+        }
+
+        .template-fashion {
+            background: linear-gradient(135deg, #2d002d 0%, #5d005d 100%);
+        }
+
+        .template-travel {
+            background: linear-gradient(135deg, #002233 0%, #004466 100%);
+        }
+
+        .template-education {
+            background: linear-gradient(135deg, #1a1a00 0%, #3a3a00 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <div class="left-sidebar">
+            <div class="logo-header">
+                <h1>Brochure Creator</h1>
+                <p>Professional Multi-Page Design Tool</p>
+            </div>
+
+            <div class="lang-toggle">
+                <button class="lang-btn active" onclick="setLanguage('el')" data-lang="el">Ελληνικά</button>
+                <button class="lang-btn" onclick="setLanguage('en')" data-lang="en">English</button>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title" data-i18n="pages">Pages</div>
+                <div class="page-count-grid">
+                    <button class="page-count-btn active" onclick="setPageCount(1)">1</button>
+                    <button class="page-count-btn" onclick="setPageCount(2)">2</button>
+                    <button class="page-count-btn" onclick="setPageCount(4)">4</button>
+                    <button class="page-count-btn" onclick="setPageCount(8)">8</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title" data-i18n="paperSize">Paper Size</div>
+                <div class="size-grid">
+                    <button class="size-btn active" onclick="setPaperSize('a4')">A4</button>
+                    <button class="size-btn" onclick="setPaperSize('a5')">A5</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title" data-i18n="templates">Templates</div>
+                <div class="template-scroll">
+                    <div class="template-item active" onclick="applyTemplate('blank')" data-template="blank">
+                        <h4 data-i18n="blank">Blank</h4>
+                        <p data-i18n="blankDesc">Start from scratch</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('restaurant')" data-template="restaurant">
+                        <h4 data-i18n="restaurant">Restaurant</h4>
+                        <p data-i18n="restaurantDesc">Menu & dining</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('market')" data-template="market">
+                        <h4 data-i18n="market">Supermarket</h4>
+                        <p data-i18n="marketDesc">Weekly offers</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('car')" data-template="car">
+                        <h4 data-i18n="car">Car Dealer</h4>
+                        <p data-i18n="carDesc">Vehicle showcase</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('realestate')" data-template="realestate">
+                        <h4 data-i18n="realestate">Real Estate</h4>
+                        <p data-i18n="realestateDesc">Property listings</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('beauty')" data-template="beauty">
+                        <h4 data-i18n="beauty">Beauty Salon</h4>
+                        <p data-i18n="beautyDesc">Services & prices</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('gym')" data-template="gym">
+                        <h4 data-i18n="gym">Fitness Center</h4>
+                        <p data-i18n="gymDesc">Memberships</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('tech')" data-template="tech">
+                        <h4 data-i18n="tech">Electronics</h4>
+                        <p data-i18n="techDesc">Tech products</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('fashion')" data-template="fashion">
+                        <h4 data-i18n="fashion">Fashion Store</h4>
+                        <p data-i18n="fashionDesc">Clothing catalog</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('travel')" data-template="travel">
+                        <h4 data-i18n="travel">Travel Agency</h4>
+                        <p data-i18n="travelDesc">Destinations</p>
+                    </div>
+                    <div class="template-item" onclick="applyTemplate('education')" data-template="education">
+                        <h4 data-i18n="education">Education</h4>
+                        <p data-i18n="educationDesc">Courses & programs</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title" data-i18n="export">Export</div>
+                <button class="btn btn-primary btn-block" onclick="exportToPDF()">
+                    <span data-i18n="exportPDF">📄 Export as PDF</span>
+                </button>
+                <button class="btn btn-primary btn-block" onclick="exportToImages()">
+                    <span data-i18n="exportImages">🖼️ Export as Images</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area">
+            <div class="canvas-header">
+                <h2 data-i18n="workspace">Workspace</h2>
+                <div class="canvas-actions">
+                    <button class="btn btn-secondary" onclick="zoomOut()">🔍-</button>
+                    <button class="btn btn-secondary" onclick="zoomReset()">100%</button>
+                    <button class="btn btn-secondary" onclick="zoomIn()">🔍+</button>
+                </div>
+            </div>
+
+            <div class="pages-nav" id="pagesNav">
+                <button class="page-tab active" onclick="switchPage(0)">
+                    <span data-i18n="page">Page</span> 1
+                </button>
+            </div>
+
+            <div class="canvas-content" id="canvasContent">
+                <div class="preview-container">
+                    <div class="page-canvas a4" id="pageCanvas0" data-page="0"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="right-sidebar">
+            <div class="add-element-section">
+                <div class="section-title" data-i18n="addElements">Add Elements</div>
+                <div class="element-grid">
+                    <button class="element-btn" onclick="addTextElement()">
+                        <span data-i18n="addText">📝 Text</span>
+                    </button>
+                    <button class="element-btn" onclick="openImageUpload('image')">
+                        <span data-i18n="addImage">🖼️ Image</span>
+                    </button>
+                    <button class="element-btn" onclick="openImageUpload('background')">
+                        <span data-i18n="addBg">🎨 Background</span>
+                    </button>
+                    <button class="element-btn" onclick="openImageUpload('logo')">
+                        <span data-i18n="addLogo">🏢 Logo</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="layers-section">
+                <div class="section-title" data-i18n="layers">Layers</div>
+                <div id="layersList"></div>
+            </div>
+
+            <div class="properties-section">
+                <div class="section-title" data-i18n="properties">Properties</div>
+                <div id="propertiesPanel">
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.5); text-align: center; margin-top: 20px;" data-i18n="selectElement">
+                        Select an element to edit
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Upload Modal -->
+    <div class="modal" id="imageUploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="uploadImage">Upload Image</h3>
+            </div>
+            <div class="modal-body">
+                <input type="file" id="imageFileInput" class="file-input" accept="image/*" onchange="handleImageUpload(event)">
+                <button class="btn btn-primary btn-block" onclick="document.getElementById('imageFileInput').click()">
+                    <span data-i18n="chooseFile">Choose File</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeImageUpload()">
+                    <span data-i18n="cancel">Cancel</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Translations
+        const translations = {
+            el: {
+                pages: 'Σελίδες',
+                paperSize: 'Μέγεθος Χαρτιού',
+                templates: 'Πρότυπα',
+                blank: 'Κενό',
+                blankDesc: 'Ξεκινήστε από την αρχή',
+                restaurant: 'Εστιατόριο',
+                restaurantDesc: 'Μενού & εστίαση',
+                market: 'Σούπερ Μάρκετ',
+                marketDesc: 'Εβδομαδιαίες προσφορές',
+                car: 'Αντιπροσωπεία Αυτοκινήτων',
+                carDesc: 'Παρουσίαση οχημάτων',
+                realestate: 'Μεσιτικό Γραφείο',
+                realestateDesc: 'Καταχωρήσεις ακινήτων',
+                beauty: 'Κομμωτήριο',
+                beautyDesc: 'Υπηρεσίες & τιμές',
+                gym: 'Γυμναστήριο',
+                gymDesc: 'Συνδρομές',
+                tech: 'Ηλεκτρονικά',
+                techDesc: 'Τεχνολογικά προϊόντα',
+                fashion: 'Κατάστημα Ρούχων',
+                fashionDesc: 'Κατάλογος ρούχων',
+                travel: 'Ταξιδιωτικό Γραφείο',
+                travelDesc: 'Προορισμοί',
+                education: 'Εκπαίδευση',
+                educationDesc: 'Μαθήματα & προγράμματα',
+                export: 'Εξαγωγή',
+                exportPDF: '📄 Εξαγωγή σε PDF',
+                exportImages: '🖼️ Εξαγωγή σε Εικόνες',
+                workspace: 'Χώρος Εργασίας',
+                page: 'Σελίδα',
+                addElements: 'Προσθήκη Στοιχείων',
+                addText: '📝 Κείμενο',
+                addImage: '🖼️ Εικόνα',
+                addBg: '🎨 Φόντο',
+                addLogo: '🏢 Λογότυπο',
+                layers: 'Επίπεδα',
+                properties: 'Ιδιότητες',
+                selectElement: 'Επιλέξτε ένα στοιχείο για επεξεργασία',
+                uploadImage: 'Ανέβασμα Εικόνας',
+                chooseFile: 'Επιλογή Αρχείου',
+                cancel: 'Ακύρωση',
+                text: 'Κείμενο',
+                fontSize: 'Μέγεθος Γραμματοσειράς',
+                fontFamily: 'Γραμματοσειρά',
+                textColor: 'Χρώμα Κειμένου',
+                backgroundColor: 'Χρώμα Φόντου',
+                width: 'Πλάτος',
+                height: 'Ύψος',
+                opacity: 'Διαφάνεια',
+                rotation: 'Περιστροφή'
+            },
+            en: {
+                pages: 'Pages',
+                paperSize: 'Paper Size',
+                templates: 'Templates',
+                blank: 'Blank',
+                blankDesc: 'Start from scratch',
+                restaurant: 'Restaurant',
+                restaurantDesc: 'Menu & dining',
+                market: 'Supermarket',
+                marketDesc: 'Weekly offers',
+                car: 'Car Dealer',
+                carDesc: 'Vehicle showcase',
+                realestate: 'Real Estate',
+                realestateDesc: 'Property listings',
+                beauty: 'Beauty Salon',
+                beautyDesc: 'Services & prices',
+                gym: 'Fitness Center',
+                gymDesc: 'Memberships',
+                tech: 'Electronics',
+                techDesc: 'Tech products',
+                fashion: 'Fashion Store',
+                fashionDesc: 'Clothing catalog',
+                travel: 'Travel Agency',
+                travelDesc: 'Destinations',
+                education: 'Education',
+                educationDesc: 'Courses & programs',
+                export: 'Export',
+                exportPDF: '📄 Export as PDF',
+                exportImages: '🖼️ Export as Images',
+                workspace: 'Workspace',
+                page: 'Page',
+                addElements: 'Add Elements',
+                addText: '📝 Text',
+                addImage: '🖼️ Image',
+                addBg: '🎨 Background',
+                addLogo: '🏢 Logo',
+                layers: 'Layers',
+                properties: 'Properties',
+                selectElement: 'Select an element to edit',
+                uploadImage: 'Upload Image',
+                chooseFile: 'Choose File',
+                cancel: 'Cancel',
+                text: 'Text',
+                fontSize: 'Font Size',
+                fontFamily: 'Font Family',
+                textColor: 'Text Color',
+                backgroundColor: 'Background Color',
+                width: 'Width',
+                height: 'Height',
+                opacity: 'Opacity',
+                rotation: 'Rotation'
+            }
+        };
+
+        // Global State
+        let currentLang = 'el';
+        let currentPageCount = 1;
+        let currentPaperSize = 'a4';
+        let currentPage = 0;
+        let currentTemplate = 'blank';
+        let zoom = 1;
+        let selectedElement = null;
+        let currentImageType = null;
+        let elementIdCounter = 0;
+
+        // Page data structure
+        let pages = [
+            { elements: [] }
+        ];
+
+        // Initialize
+        function init() {
+            updatePageTabs();
+            updateLayers();
+            setupDragAndDrop();
+        }
+
+        // Language Management
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            updateTranslations();
+        }
+
+        function updateTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (translations[currentLang][key]) {
+                    el.textContent = translations[currentLang][key];
+                }
+            });
+        }
+
+        // Page Management
+        function setPageCount(count) {
+            currentPageCount = count;
+            document.querySelectorAll('.page-count-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Adjust pages array
+            while (pages.length < count) {
+                pages.push({ elements: [] });
+            }
+            while (pages.length > count) {
+                pages.pop();
+            }
+
+            updatePageTabs();
+            renderCurrentPage();
+        }
+
+        function setPaperSize(size) {
+            currentPaperSize = size;
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update all page canvases
+            document.querySelectorAll('.page-canvas').forEach(canvas => {
+                canvas.className = `page-canvas ${size}`;
+            });
+        }
+
+        function updatePageTabs() {
+            const nav = document.getElementById('pagesNav');
+            nav.innerHTML = '';
+
+            for (let i = 0; i < currentPageCount; i++) {
+                const tab = document.createElement('button');
+                tab.className = `page-tab ${i === currentPage ? 'active' : ''}`;
+                tab.onclick = () => switchPage(i);
+                tab.innerHTML = `<span data-i18n="page">${translations[currentLang].page}</span> ${i + 1}`;
+                nav.appendChild(tab);
+            }
+        }
+
+        function switchPage(pageIndex) {
+            currentPage = pageIndex;
+            document.querySelectorAll('.page-tab').forEach((tab, idx) => {
+                tab.classList.toggle('active', idx === pageIndex);
+            });
+            renderCurrentPage();
+        }
+
+        function renderCurrentPage() {
+            const container = document.getElementById('canvasContent');
+            container.innerHTML = '';
+
+            const preview = document.createElement('div');
+            preview.className = 'preview-container';
+
+            const canvas = document.createElement('div');
+            canvas.className = `page-canvas ${currentPaperSize}`;
+            canvas.id = `pageCanvas${currentPage}`;
+            canvas.dataset.page = currentPage;
+
+            // Apply template background
+            if (currentTemplate !== 'blank') {
+                canvas.classList.add(`template-${currentTemplate}`);
+            }
+
+            // Render elements
+            const pageData = pages[currentPage];
+            pageData.elements.forEach(element => {
+                const el = createElementDOM(element);
+                canvas.appendChild(el);
+            });
+
+            preview.appendChild(canvas);
+            container.appendChild(preview);
+
+            updateLayers();
+        }
+
+        // Template Management
+        function applyTemplate(template) {
+            currentTemplate = template;
+            document.querySelectorAll('.template-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.template === template);
+            });
+
+            // Apply template to current page
+            const canvas = document.querySelector(`#pageCanvas${currentPage}`);
+            if (canvas) {
+                // Remove all template classes
+                canvas.className = `page-canvas ${currentPaperSize}`;
+                if (template !== 'blank') {
+                    canvas.classList.add(`template-${template}`);
+                }
+            }
+
+            // Load template content
+            loadTemplateContent(template);
+        }
+
+        function loadTemplateContent(template) {
+            // Clear current page
+            pages[currentPage].elements = [];
+
+            // Template configurations
+            const templates = {
+                restaurant: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΕΣΤΙΑΤΟΡΙΟ' : 'RESTAURANT',
+                            x: 100,
+                            y: 80,
+                            width: 600,
+                            height: 80,
+                            fontSize: 64,
+                            fontFamily: 'Playfair Display',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΜΕΝΟΥ ΤΗΣ ΗΜΕΡΑΣ' : 'DAILY MENU',
+                            x: 100,
+                            y: 180,
+                            width: 600,
+                            height: 40,
+                            fontSize: 28,
+                            fontFamily: 'Montserrat',
+                            color: '#ffd700',
+                            fontWeight: '600',
+                            textAlign: 'center'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ?
+                                '• Σαλάτα Σεφ\n• Μοσχαράκι με λεμόνι\n• Ψάρι στη σχάρα\n• Παραδοσιακό γλυκό' :
+                                '• Chef\'s Salad\n• Lemon Veal\n• Grilled Fish\n• Traditional Dessert',
+                            x: 100,
+                            y: 300,
+                            width: 600,
+                            height: 300,
+                            fontSize: 24,
+                            fontFamily: 'Roboto',
+                            color: '#ffffff',
+                            fontWeight: '400',
+                            lineHeight: '1.8'
+                        }
+                    ]
+                },
+                market: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΠΡΟΣΦΟΡΕΣ ΕΒΔΟΜΑΔΑΣ' : 'WEEKLY OFFERS',
+                            x: 80,
+                            y: 60,
+                            width: 640,
+                            height: 70,
+                            fontSize: 56,
+                            fontFamily: 'Montserrat',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΕΚΠΤΩΣΕΙΣ ΕΩΣ 50%' : 'DISCOUNTS UP TO 50%',
+                            x: 80,
+                            y: 140,
+                            width: 640,
+                            height: 50,
+                            fontSize: 36,
+                            fontFamily: 'Roboto',
+                            color: '#ffff00',
+                            fontWeight: '700',
+                            textAlign: 'center'
+                        }
+                    ]
+                },
+                car: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΑΥΤΟΚΙΝΗΤΑ' : 'AUTOMOBILES',
+                            x: 100,
+                            y: 100,
+                            width: 600,
+                            height: 80,
+                            fontSize: 72,
+                            fontFamily: 'Montserrat',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center',
+                            letterSpacing: '4px'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'Η καλύτερη επιλογή σας' : 'Your best choice',
+                            x: 100,
+                            y: 190,
+                            width: 600,
+                            height: 40,
+                            fontSize: 24,
+                            fontFamily: 'Roboto',
+                            color: '#cccccc',
+                            fontWeight: '300',
+                            textAlign: 'center'
+                        }
+                    ]
+                },
+                realestate: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΑΚΙΝΗΤΑ' : 'REAL ESTATE',
+                            x: 100,
+                            y: 80,
+                            width: 600,
+                            height: 70,
+                            fontSize: 64,
+                            fontFamily: 'Playfair Display',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ?
+                                'Βρείτε το ιδανικό σπίτι σας' :
+                                'Find your ideal home',
+                            x: 100,
+                            y: 160,
+                            width: 600,
+                            height: 40,
+                            fontSize: 28,
+                            fontFamily: 'Roboto',
+                            color: '#87ceeb',
+                            fontWeight: '400',
+                            textAlign: 'center'
+                        }
+                    ]
+                },
+                beauty: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΟΜΟΡΦΙΑ' : 'BEAUTY',
+                            x: 100,
+                            y: 100,
+                            width: 600,
+                            height: 80,
+                            fontSize: 68,
+                            fontFamily: 'Playfair Display',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ?
+                                'Υπηρεσίες κομμωτηρίου & αισθητικής' :
+                                'Hair & beauty services',
+                            x: 100,
+                            y: 190,
+                            width: 600,
+                            height: 40,
+                            fontSize: 24,
+                            fontFamily: 'Montserrat',
+                            color: '#ffc0cb',
+                            fontWeight: '400',
+                            textAlign: 'center'
+                        }
+                    ]
+                },
+                gym: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'FITNESS' : 'FITNESS',
+                            x: 100,
+                            y: 100,
+                            width: 600,
+                            height: 90,
+                            fontSize: 76,
+                            fontFamily: 'Montserrat',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center',
+                            letterSpacing: '6px'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ?
+                                'Γίνε η καλύτερη εκδοχή του εαυτού σου' :
+                                'Become the best version of yourself',
+                            x: 100,
+                            y: 200,
+                            width: 600,
+                            height: 40,
+                            fontSize: 22,
+                            fontFamily: 'Roboto',
+                            color: '#ffa500',
+                            fontWeight: '600',
+                            textAlign: 'center'
+                        }
+                    ]
+                },
+                tech: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΤΕΧΝΟΛΟΓΙΑ' : 'TECHNOLOGY',
+                            x: 100,
+                            y: 90,
+                            width: 600,
+                            height: 80,
+                            fontSize: 64,
+                            fontFamily: 'Montserrat',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ?
+                                'Τα νεότερα προϊόντα στις καλύτερες τιμές' :
+                                'Latest products at best prices',
+                            x: 100,
+                            y: 180,
+                            width: 600,
+                            height: 40,
+                            fontSize: 24,
+                            fontFamily: 'Roboto',
+                            color: '#00bfff',
+                            fontWeight: '400',
+                            textAlign: 'center'
+                        }
+                    ]
+                },
+                fashion: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΜΟΔΑ' : 'FASHION',
+                            x: 100,
+                            y: 100,
+                            width: 600,
+                            height: 80,
+                            fontSize: 72,
+                            fontFamily: 'Playfair Display',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center',
+                            fontStyle: 'italic'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ?
+                                'Νέα Collection' :
+                                'New Collection',
+                            x: 100,
+                            y: 190,
+                            width: 600,
+                            height: 40,
+                            fontSize: 32,
+                            fontFamily: 'Montserrat',
+                            color: '#da70d6',
+                            fontWeight: '600',
+                            textAlign: 'center'
+                        }
+                    ]
+                },
+                travel: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΤΑΞΙΔΙΑ' : 'TRAVEL',
+                            x: 100,
+                            y: 90,
+                            width: 600,
+                            height: 80,
+                            fontSize: 68,
+                            fontFamily: 'Montserrat',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center',
+                            letterSpacing: '8px'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ?
+                                'Ανακαλύψτε τον κόσμο μαζί μας' :
+                                'Discover the world with us',
+                            x: 100,
+                            y: 180,
+                            width: 600,
+                            height: 40,
+                            fontSize: 26,
+                            fontFamily: 'Roboto',
+                            color: '#87ceeb',
+                            fontWeight: '400',
+                            textAlign: 'center'
+                        }
+                    ]
+                },
+                education: {
+                    elements: [
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ? 'ΕΚΠΑΙΔΕΥΣΗ' : 'EDUCATION',
+                            x: 100,
+                            y: 100,
+                            width: 600,
+                            height: 80,
+                            fontSize: 64,
+                            fontFamily: 'Montserrat',
+                            color: '#ffffff',
+                            fontWeight: '900',
+                            textAlign: 'center'
+                        },
+                        {
+                            type: 'text',
+                            content: currentLang === 'el' ?
+                                'Μάθετε κάτι νέο κάθε μέρα' :
+                                'Learn something new every day',
+                            x: 100,
+                            y: 190,
+                            width: 600,
+                            height: 40,
+                            fontSize: 24,
+                            fontFamily: 'Roboto',
+                            color: '#ffd700',
+                            fontWeight: '400',
+                            textAlign: 'center'
+                        }
+                    ]
+                }
+            };
+
+            if (template !== 'blank' && templates[template]) {
+                pages[currentPage].elements = templates[template].elements.map(el => ({
+                    ...el,
+                    id: `element-${elementIdCounter++}`,
+                    zIndex: elementIdCounter
+                }));
+            }
+
+            renderCurrentPage();
+        }
+
+        // Element Management
+        function addTextElement() {
+            const element = {
+                id: `element-${elementIdCounter++}`,
+                type: 'text',
+                content: currentLang === 'el' ? 'Κείμενο' : 'Text',
+                x: 100,
+                y: 100,
+                width: 300,
+                height: 60,
+                fontSize: 32,
+                fontFamily: 'Roboto',
+                color: '#000000',
+                backgroundColor: 'transparent',
+                fontWeight: '400',
+                textAlign: 'left',
+                zIndex: elementIdCounter
+            };
+
+            pages[currentPage].elements.push(element);
+            renderCurrentPage();
+        }
+
+        function openImageUpload(type) {
+            currentImageType = type;
+            document.getElementById('imageUploadModal').classList.add('active');
+        }
+
+        function closeImageUpload() {
+            document.getElementById('imageUploadModal').classList.remove('active');
+            currentImageType = null;
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    let element;
+
+                    if (currentImageType === 'background') {
+                        // Background image fills the entire page
+                        const canvas = document.querySelector(`#pageCanvas${currentPage}`);
+                        const width = canvas.offsetWidth;
+                        const height = canvas.offsetHeight;
+
+                        element = {
+                            id: `element-${elementIdCounter++}`,
+                            type: 'background',
+                            src: e.target.result,
+                            x: 0,
+                            y: 0,
+                            width: width,
+                            height: height,
+                            zIndex: -1
+                        };
+                    } else {
+                        // Regular image or logo
+                        const maxWidth = currentImageType === 'logo' ? 200 : 400;
+                        const scale = Math.min(1, maxWidth / img.width);
+                        const width = img.width * scale;
+                        const height = img.height * scale;
+
+                        element = {
+                            id: `element-${elementIdCounter++}`,
+                            type: currentImageType,
+                            src: e.target.result,
+                            x: 100,
+                            y: 100,
+                            width: width,
+                            height: height,
+                            zIndex: elementIdCounter
+                        };
+                    }
+
+                    pages[currentPage].elements.push(element);
+                    renderCurrentPage();
+                    closeImageUpload();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            // Reset input
+            event.target.value = '';
+        }
+
+        function createElementDOM(element) {
+            const el = document.createElement('div');
+            el.className = 'canvas-element';
+            el.dataset.id = element.id;
+            el.style.left = element.x + 'px';
+            el.style.top = element.y + 'px';
+            el.style.width = element.width + 'px';
+            el.style.height = element.height + 'px';
+            el.style.zIndex = element.zIndex || 1;
+
+            if (element.type === 'text') {
+                el.classList.add('text-element');
+                el.textContent = element.content;
+                el.style.fontSize = element.fontSize + 'px';
+                el.style.fontFamily = element.fontFamily;
+                el.style.color = element.color;
+                el.style.backgroundColor = element.backgroundColor || 'transparent';
+                el.style.fontWeight = element.fontWeight || '400';
+                el.style.textAlign = element.textAlign || 'left';
+                el.style.lineHeight = element.lineHeight || '1.4';
+                el.style.letterSpacing = element.letterSpacing || '0px';
+                if (element.fontStyle) el.style.fontStyle = element.fontStyle;
+            } else {
+                // Image, logo, or background
+                el.classList.add('image-element');
+                const img = document.createElement('img');
+                img.src = element.src;
+                el.appendChild(img);
+
+                if (element.type === 'background') {
+                    el.style.zIndex = -1;
+                    img.style.objectFit = 'cover';
+                }
+            }
+
+            // Add resize handle
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'resize-handle';
+            el.appendChild(resizeHandle);
+
+            // Add delete handle
+            const deleteHandle = document.createElement('div');
+            deleteHandle.className = 'delete-handle';
+            deleteHandle.textContent = '×';
+            deleteHandle.onclick = (e) => {
+                e.stopPropagation();
+                deleteElement(element.id);
+            };
+            el.appendChild(deleteHandle);
+
+            // Make draggable
+            makeDraggable(el, element);
+
+            // Make selectable
+            el.onclick = (e) => {
+                e.stopPropagation();
+                selectElement(element.id);
+            };
+
+            return el;
+        }
+
+        function makeDraggable(el, element) {
+            let isDragging = false;
+            let isResizing = false;
+            let startX, startY, startWidth, startHeight;
+
+            el.onmousedown = function(e) {
+                if (e.target.classList.contains('resize-handle')) {
+                    isResizing = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = el.offsetWidth;
+                    startHeight = el.offsetHeight;
+                } else if (!e.target.classList.contains('delete-handle')) {
+                    isDragging = true;
+                    startX = e.clientX - el.offsetLeft;
+                    startY = e.clientY - el.offsetTop;
+                }
+
+                e.preventDefault();
+            };
+
+            document.onmousemove = function(e) {
+                if (isDragging) {
+                    const canvas = document.querySelector(`#pageCanvas${currentPage}`);
+                    const canvasRect = canvas.getBoundingClientRect();
+                    let newX = e.clientX - canvasRect.left - startX;
+                    let newY = e.clientY - canvasRect.top - startY;
+
+                    // Constrain to canvas
+                    newX = Math.max(0, Math.min(newX, canvas.offsetWidth - el.offsetWidth));
+                    newY = Math.max(0, Math.min(newY, canvas.offsetHeight - el.offsetHeight));
+
+                    el.style.left = newX + 'px';
+                    el.style.top = newY + 'px';
+
+                    element.x = newX;
+                    element.y = newY;
+                } else if (isResizing) {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    const newHeight = startHeight + (e.clientY - startY);
+
+                    if (newWidth > 20 && newHeight > 20) {
+                        el.style.width = newWidth + 'px';
+                        el.style.height = newHeight + 'px';
+
+                        element.width = newWidth;
+                        element.height = newHeight;
+
+                        // Update font size proportionally for text elements
+                        if (element.type === 'text') {
+                            const scale = newWidth / startWidth;
+                            element.fontSize = Math.max(12, element.fontSize * scale);
+                            el.style.fontSize = element.fontSize + 'px';
+                        }
+                    }
+                }
+            };
+
+            document.onmouseup = function() {
+                isDragging = false;
+                isResizing = false;
+            };
+        }
+
+        function selectElement(elementId) {
+            selectedElement = elementId;
+
+            // Update visual selection
+            document.querySelectorAll('.canvas-element').forEach(el => {
+                el.classList.toggle('selected', el.dataset.id === elementId);
+            });
+
+            // Update layers
+            updateLayers();
+
+            // Update properties panel
+            updatePropertiesPanel();
+        }
+
+        function deleteElement(elementId) {
+            const index = pages[currentPage].elements.findIndex(el => el.id === elementId);
+            if (index !== -1) {
+                pages[currentPage].elements.splice(index, 1);
+                selectedElement = null;
+                renderCurrentPage();
+            }
+        }
+
+        function updateLayers() {
+            const layersList = document.getElementById('layersList');
+            layersList.innerHTML = '';
+
+            const elements = pages[currentPage].elements;
+
+            // Sort by z-index (highest first)
+            const sortedElements = [...elements].sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+
+            sortedElements.forEach(element => {
+                const layer = document.createElement('div');
+                layer.className = `layer-item ${selectedElement === element.id ? 'active' : ''}`;
+                layer.onclick = () => selectElement(element.id);
+
+                const name = document.createElement('span');
+                name.className = 'layer-name';
+                name.textContent = element.type === 'text' ?
+                    (element.content.substring(0, 20) + (element.content.length > 20 ? '...' : '')) :
+                    element.type.charAt(0).toUpperCase() + element.type.slice(1);
+
+                const controls = document.createElement('div');
+                controls.className = 'layer-controls';
+
+                const upBtn = document.createElement('button');
+                upBtn.className = 'layer-btn';
+                upBtn.textContent = '↑';
+                upBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    moveLayer(element.id, 'up');
+                };
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'layer-btn';
+                downBtn.textContent = '↓';
+                downBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    moveLayer(element.id, 'down');
+                };
+
+                controls.appendChild(upBtn);
+                controls.appendChild(downBtn);
+
+                layer.appendChild(name);
+                layer.appendChild(controls);
+                layersList.appendChild(layer);
+            });
+        }
+
+        function moveLayer(elementId, direction) {
+            const element = pages[currentPage].elements.find(el => el.id === elementId);
+            if (!element) return;
+
+            const delta = direction === 'up' ? 1 : -1;
+            element.zIndex = (element.zIndex || 0) + delta;
+
+            renderCurrentPage();
+        }
+
+        function updatePropertiesPanel() {
+            const panel = document.getElementById('propertiesPanel');
+
+            if (!selectedElement) {
+                panel.innerHTML = `<p style="font-size: 12px; color: rgba(255,255,255,0.5); text-align: center; margin-top: 20px;" data-i18n="selectElement">
+                    ${translations[currentLang].selectElement}
+                </p>`;
+                return;
+            }
+
+            const element = pages[currentPage].elements.find(el => el.id === selectedElement);
+            if (!element) return;
+
+            let html = '';
+
+            if (element.type === 'text') {
+                html = `
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="text">${translations[currentLang].text}</label>
+                        <textarea class="form-input" style="min-height: 100px;" onchange="updateElementProperty('content', this.value)">${element.content}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="fontSize">${translations[currentLang].fontSize}</label>
+                        <input type="number" class="form-input" value="${element.fontSize}" onchange="updateElementProperty('fontSize', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="fontFamily">${translations[currentLang].fontFamily}</label>
+                        <select class="form-select" onchange="updateElementProperty('fontFamily', this.value)">
+                            <option value="Roboto" ${element.fontFamily === 'Roboto' ? 'selected' : ''}>Roboto</option>
+                            <option value="Montserrat" ${element.fontFamily === 'Montserrat' ? 'selected' : ''}>Montserrat</option>
+                            <option value="Playfair Display" ${element.fontFamily === 'Playfair Display' ? 'selected' : ''}>Playfair Display</option>
+                            <option value="Lora" ${element.fontFamily === 'Lora' ? 'selected' : ''}>Lora</option>
+                            <option value="Raleway" ${element.fontFamily === 'Raleway' ? 'selected' : ''}>Raleway</option>
+                            <option value="Open Sans" ${element.fontFamily === 'Open Sans' ? 'selected' : ''}>Open Sans</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="textColor">${translations[currentLang].textColor}</label>
+                        <div class="color-picker-group">
+                            <input type="color" class="color-input" value="${element.color}" onchange="updateElementProperty('color', this.value)">
+                            <input type="text" class="form-input" style="flex: 1;" value="${element.color}" onchange="updateElementProperty('color', this.value)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="backgroundColor">${translations[currentLang].backgroundColor}</label>
+                        <div class="color-picker-group">
+                            <input type="color" class="color-input" value="${element.backgroundColor || '#ffffff'}" onchange="updateElementProperty('backgroundColor', this.value)">
+                            <input type="text" class="form-input" style="flex: 1;" value="${element.backgroundColor || 'transparent'}" onchange="updateElementProperty('backgroundColor', this.value)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Font Weight</label>
+                        <select class="form-select" onchange="updateElementProperty('fontWeight', this.value)">
+                            <option value="300" ${element.fontWeight === '300' ? 'selected' : ''}>Light</option>
+                            <option value="400" ${element.fontWeight === '400' ? 'selected' : ''}>Regular</option>
+                            <option value="600" ${element.fontWeight === '600' ? 'selected' : ''}>Semi-Bold</option>
+                            <option value="700" ${element.fontWeight === '700' ? 'selected' : ''}>Bold</option>
+                            <option value="900" ${element.fontWeight === '900' ? 'selected' : ''}>Black</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Text Align</label>
+                        <select class="form-select" onchange="updateElementProperty('textAlign', this.value)">
+                            <option value="left" ${element.textAlign === 'left' ? 'selected' : ''}>Left</option>
+                            <option value="center" ${element.textAlign === 'center' ? 'selected' : ''}>Center</option>
+                            <option value="right" ${element.textAlign === 'right' ? 'selected' : ''}>Right</option>
+                            <option value="justify" ${element.textAlign === 'justify' ? 'selected' : ''}>Justify</option>
+                        </select>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="form-group">
+                    <label class="form-label" data-i18n="width">${translations[currentLang].width}</label>
+                    <input type="number" class="form-input" value="${Math.round(element.width)}" onchange="updateElementProperty('width', this.value)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="height">${translations[currentLang].height}</label>
+                    <input type="number" class="form-input" value="${Math.round(element.height)}" onchange="updateElementProperty('height', this.value)">
+                </div>
+            `;
+
+            panel.innerHTML = html;
+        }
+
+        function updateElementProperty(property, value) {
+            if (!selectedElement) return;
+
+            const element = pages[currentPage].elements.find(el => el.id === selectedElement);
+            if (!element) return;
+
+            // Convert numeric values
+            if (property === 'fontSize' || property === 'width' || property === 'height') {
+                value = parseFloat(value);
+            }
+
+            element[property] = value;
+            renderCurrentPage();
+            selectElement(selectedElement); // Re-select to update properties panel
+        }
+
+        // Zoom Controls
+        function zoomIn() {
+            zoom = Math.min(zoom + 0.1, 2);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            zoom = Math.max(zoom - 0.1, 0.3);
+            applyZoom();
+        }
+
+        function zoomReset() {
+            zoom = 1;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            const canvas = document.querySelector('.preview-container');
+            if (canvas) {
+                canvas.style.transform = `scale(${zoom})`;
+                canvas.style.transformOrigin = 'top center';
+            }
+        }
+
+        // Export Functions
+        async function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: currentPaperSize === 'a4' ? 'portrait' : 'portrait',
+                unit: 'mm',
+                format: currentPaperSize
+            });
+
+            for (let i = 0; i < pages.length; i++) {
+                // Temporarily switch to this page
+                const originalPage = currentPage;
+                currentPage = i;
+                renderCurrentPage();
+
+                // Wait for render
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                const canvas = document.querySelector(`#pageCanvas${i}`);
+                if (!canvas) continue;
+
+                const imgData = await html2canvas(canvas, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgWidth = currentPaperSize === 'a4' ? 210 : 148;
+                const imgHeight = currentPaperSize === 'a4' ? 297 : 210;
+
+                if (i > 0) {
+                    doc.addPage();
+                }
+
+                doc.addImage(imgData.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+
+                // Restore original page
+                currentPage = originalPage;
+            }
+
+            doc.save('brochure.pdf');
+            renderCurrentPage();
+        }
+
+        async function exportToImages() {
+            for (let i = 0; i < pages.length; i++) {
+                // Temporarily switch to this page
+                const originalPage = currentPage;
+                currentPage = i;
+                renderCurrentPage();
+
+                // Wait for render
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                const canvas = document.querySelector(`#pageCanvas${i}`);
+                if (!canvas) continue;
+
+                const imgData = await html2canvas(canvas, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                // Download image
+                const link = document.createElement('a');
+                link.download = `brochure-page-${i + 1}.png`;
+                link.href = imgData.toDataURL('image/png');
+                link.click();
+
+                // Restore original page
+                currentPage = originalPage;
+            }
+
+            renderCurrentPage();
+        }
+
+        // Drag and Drop Setup
+        function setupDragAndDrop() {
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.canvas-element')) return;
+                if (e.target.closest('.right-sidebar')) return;
+
+                // Deselect
+                selectedElement = null;
+                document.querySelectorAll('.canvas-element').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                updateLayers();
+                updatePropertiesPanel();
+            });
+        }
+
+        // Initialize app
+        window.onload = function() {
+            init();
+        };
+    </script>
+</body>
+</html>
