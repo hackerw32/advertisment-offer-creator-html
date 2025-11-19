@@ -1544,12 +1544,25 @@
             for (let i = 0; i < pageCount; i++) {
                 const pageContent = contentArray[i] || '';
 
-                // Add gradient background (behind everything)
+                // Add gradient background as actual image (behind everything)
                 if (templateData.color1End) {
+                    const gradId = 'grad-' + Math.random().toString(36).substr(2, 9);
+                    const svgString = `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:${templateData.color1};stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:${templateData.color1End};stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="800" height="1200" fill="url(#${gradId})"/>
+                    </svg>`;
+                    const encoded = btoa(unescape(encodeURIComponent(svgString)));
+                    const dataUrl = `data:image/svg+xml;base64,${encoded}`;
+
                     pages[i].elements.push({
                         id: `element-${elementIdCounter++}`,
-                        type: 'shape',
-                        svgContent: createGradientBackground(templateData.color1, templateData.color1End),
+                        type: 'background',
+                        src: dataUrl,
                         x: 0,
                         y: 0,
                         width: selectedPaperSize === 'a4' ? 794 : 559,
@@ -1883,8 +1896,11 @@
 
             const elements = pages[currentPage].elements;
 
+            // Filter out gradient backgrounds (z-index: -1) from layer list
+            const visibleElements = elements.filter(el => (el.zIndex || 0) >= 0);
+
             // Sort by z-index (highest first)
-            const sortedElements = [...elements].sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+            const sortedElements = [...visibleElements].sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
 
             sortedElements.forEach(element => {
                 const layer = document.createElement('div');
