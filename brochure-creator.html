@@ -1198,12 +1198,25 @@
             </svg>`;
         }
 
+        function createGradientBackground(color1, color2) {
+            const gradId = 'grad-' + Math.random().toString(36).substr(2, 9);
+            return `<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width:100%;height:100%;">
+                <defs>
+                    <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:${color1};stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:${color2};stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect width="800" height="1200" fill="url(#${gradId})"/>
+            </svg>`;
+        }
 
         function loadTemplateContent(template, pageCount) {
             // Template configurations
             const templates = {
                 restaurant: {
-                    color1: '#8b0000',
+                    color1: '#1a0000',
+                    color1End: '#4a0000',
                     color2: '#ffd700',
                     title: currentLang === 'el' ? 'ΕΣΤΙΑΤΟΡΙΟ' : 'RESTAURANT',
                     subtitle: currentLang === 'el' ? 'Γεύσεις που θυμάστε' : 'Tastes you remember',
@@ -1233,6 +1246,7 @@
                 },
                 market: {
                     color1: '#004d00',
+                    color1End: '#00b300',
                     color2: '#ffff00',
                     title: currentLang === 'el' ? 'ΠΡΟΣΦΟΡΕΣ' : 'SPECIAL OFFERS',
                     subtitle: currentLang === 'el' ? 'Εκπτώσεις έως 50%' : 'Discounts up to 50%',
@@ -1263,6 +1277,7 @@
                 },
                 car: {
                     color1: '#1a1a1a',
+                    color1End: '#4a4a4a',
                     color2: '#ff0000',
                     title: currentLang === 'el' ? 'ΑΥΤΟΚΙΝΗΤΑ' : 'AUTOMOBILES',
                     subtitle: currentLang === 'el' ? 'Η καλύτερη επιλογή σας' : 'Your best choice',
@@ -1293,6 +1308,7 @@
                 },
                 realestate: {
                     color1: '#003d5c',
+                    color1End: '#006d9c',
                     color2: '#87ceeb',
                     title: currentLang === 'el' ? 'ΑΚΙΝΗΤΑ' : 'REAL ESTATE',
                     subtitle: currentLang === 'el' ? 'Βρείτε το ιδανικό σπίτι σας' : 'Find your ideal home',
@@ -1323,6 +1339,7 @@
                 },
                 beauty: {
                     color1: '#4a0033',
+                    color1End: '#8a0060',
                     color2: '#ffc0cb',
                     title: currentLang === 'el' ? 'ΟΜΟΡΦΙΑ' : 'BEAUTY',
                     subtitle: currentLang === 'el' ? 'Κομμωτήριο & Αισθητική' : 'Hair & Beauty Services',
@@ -1353,6 +1370,7 @@
                 },
                 gym: {
                     color1: '#2d1b00',
+                    color1End: '#5d3b00',
                     color2: '#ffa500',
                     title: 'FITNESS',
                     subtitle: currentLang === 'el' ? 'Γίνε η καλύτερη εκδοχή σου' : 'Become your best self',
@@ -1383,6 +1401,7 @@
                 },
                 tech: {
                     color1: '#001a33',
+                    color1End: '#003d73',
                     color2: '#00bfff',
                     title: currentLang === 'el' ? 'ΤΕΧΝΟΛΟΓΙΑ' : 'TECHNOLOGY',
                     subtitle: currentLang === 'el' ? 'Τα νεότερα προϊόντα' : 'Latest products',
@@ -1413,6 +1432,7 @@
                 },
                 fashion: {
                     color1: '#2d002d',
+                    color1End: '#5d005d',
                     color2: '#da70d6',
                     title: currentLang === 'el' ? 'ΜΟΔΑ' : 'FASHION',
                     subtitle: currentLang === 'el' ? 'Νέα Collection' : 'New Collection',
@@ -1443,6 +1463,7 @@
                 },
                 travel: {
                     color1: '#002233',
+                    color1End: '#004466',
                     color2: '#87ceeb',
                     title: currentLang === 'el' ? 'ΤΑΞΙΔΙΑ' : 'TRAVEL',
                     subtitle: currentLang === 'el' ? 'Ανακαλύψτε τον κόσμο' : 'Discover the world',
@@ -1473,6 +1494,7 @@
                 },
                 education: {
                     color1: '#1a1a00',
+                    color1End: '#3a3a00',
                     color2: '#ffd700',
                     title: currentLang === 'el' ? 'ΕΚΠΑΙΔΕΥΣΗ' : 'EDUCATION',
                     subtitle: currentLang === 'el' ? 'Μάθετε κάτι νέο' : 'Learn something new',
@@ -1521,6 +1543,20 @@
             // Generate pages
             for (let i = 0; i < pageCount; i++) {
                 const pageContent = contentArray[i] || '';
+
+                // Add gradient background (behind everything)
+                if (templateData.color1End) {
+                    pages[i].elements.push({
+                        id: `element-${elementIdCounter++}`,
+                        type: 'shape',
+                        svgContent: createGradientBackground(templateData.color1, templateData.color1End),
+                        x: 0,
+                        y: 0,
+                        width: selectedPaperSize === 'a4' ? 794 : 559,
+                        height: selectedPaperSize === 'a4' ? 1123 : 794,
+                        zIndex: -1
+                    });
+                }
 
                 // Add decorative shape
                 pages[i].elements.push({
@@ -2041,7 +2077,7 @@
                 renderCurrentPage();
 
                 // Wait for render
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise(resolve => setTimeout(resolve, 300));
 
                 const canvas = document.querySelector(`#pageCanvas${i}`);
                 if (!canvas) continue;
@@ -2049,7 +2085,9 @@
                 const imgData = await html2canvas(canvas, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff'
+                    allowTaint: true,
+                    backgroundColor: null,
+                    logging: false
                 });
 
                 const imgWidth = selectedPaperSize === 'a4' ? 210 : 148;
@@ -2077,7 +2115,7 @@
                 renderCurrentPage();
 
                 // Wait for render
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise(resolve => setTimeout(resolve, 300));
 
                 const canvas = document.querySelector(`#pageCanvas${i}`);
                 if (!canvas) continue;
@@ -2085,7 +2123,9 @@
                 const imgData = await html2canvas(canvas, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff'
+                    allowTaint: true,
+                    backgroundColor: null,
+                    logging: false
                 });
 
                 // Download image
