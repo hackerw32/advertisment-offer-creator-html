@@ -604,6 +604,59 @@
             display: flex;
         }
 
+        /* Rotation Handle */
+        .rotate-handle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #10b981;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: grab;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #fff;
+        }
+
+        .canvas-element.selected .rotate-handle {
+            display: flex;
+        }
+
+        .rotate-handle::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: #10b981;
+            top: 18px;
+        }
+
+        /* Page Indicator */
+        .page-indicator {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .page-indicator-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 4px;
+        }
+
+        .page-indicator-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -842,19 +895,23 @@
         <!-- Right Sidebar -->
         <div class="right-sidebar">
             <div class="add-element-section">
+                <div class="page-indicator" id="pageIndicator">
+                    <div class="page-indicator-label" data-i18n="pageElementsFor">Page Elements for</div>
+                    <div class="page-indicator-value"><span data-i18n="page">Page</span> <strong id="currentPageNum">1</strong></div>
+                </div>
                 <div class="section-title" data-i18n="addElements">Add Elements</div>
                 <div class="element-grid">
                     <button class="element-btn" onclick="addTextElement()">
-                        <span data-i18n="addText">📝 Text</span>
+                        <span data-i18n="addText">+ Text</span>
                     </button>
                     <button class="element-btn" onclick="openImageUpload('image')">
-                        <span data-i18n="addImage">🖼️ Image</span>
+                        <span data-i18n="addImage">+ Image</span>
                     </button>
                     <button class="element-btn" onclick="openImageUpload('background')">
-                        <span data-i18n="addBg">🎨 Background</span>
+                        <span data-i18n="addBg">+ Background</span>
                     </button>
                     <button class="element-btn" onclick="openImageUpload('logo')">
-                        <span data-i18n="addLogo">🏢 Logo</span>
+                        <span data-i18n="addLogo">+ Logo</span>
                     </button>
                 </div>
             </div>
@@ -932,10 +989,10 @@
                 workspace: 'Χώρος Εργασίας',
                 page: 'Σελίδα',
                 addElements: 'Προσθήκη Στοιχείων',
-                addText: '📝 Κείμενο',
-                addImage: '🖼️ Εικόνα',
-                addBg: '🎨 Φόντο',
-                addLogo: '🏢 Λογότυπο',
+                addText: '+ Κείμενο',
+                addImage: '+ Εικόνα',
+                addBg: '+ Φόντο',
+                addLogo: '+ Λογότυπο',
                 layers: 'Επίπεδα',
                 properties: 'Ιδιότητες',
                 selectElement: 'Επιλέξτε ένα στοιχείο για επεξεργασία',
@@ -950,7 +1007,8 @@
                 width: 'Πλάτος',
                 height: 'Ύψος',
                 opacity: 'Διαφάνεια',
-                rotation: 'Περιστροφή'
+                rotation: 'Περιστροφή',
+                pageElementsFor: 'Στοιχεία Σελίδας για'
             },
             en: {
                 templates: 'Templates',
@@ -986,10 +1044,10 @@
                 workspace: 'Workspace',
                 page: 'Page',
                 addElements: 'Add Elements',
-                addText: '📝 Text',
-                addImage: '🖼️ Image',
-                addBg: '🎨 Background',
-                addLogo: '🏢 Logo',
+                addText: '+ Text',
+                addImage: '+ Image',
+                addBg: '+ Background',
+                addLogo: '+ Logo',
                 layers: 'Layers',
                 properties: 'Properties',
                 selectElement: 'Select an element to edit',
@@ -1004,7 +1062,8 @@
                 width: 'Width',
                 height: 'Height',
                 opacity: 'Opacity',
-                rotation: 'Rotation'
+                rotation: 'Rotation',
+                pageElementsFor: 'Page Elements for'
             }
         };
 
@@ -1112,6 +1171,11 @@
             document.querySelectorAll('.page-tab').forEach((tab, idx) => {
                 tab.classList.toggle('active', idx === pageIndex);
             });
+            // Update page indicator
+            const pageNumEl = document.getElementById('currentPageNum');
+            if (pageNumEl) {
+                pageNumEl.textContent = (pageIndex + 1);
+            }
             renderCurrentPage();
         }
 
@@ -1741,6 +1805,16 @@
             el.style.height = element.height + 'px';
             el.style.zIndex = element.zIndex || 1;
 
+            // Apply rotation if set
+            if (element.rotation) {
+                el.style.transform = `rotate(${element.rotation}deg)`;
+            }
+
+            // Apply opacity if set
+            if (element.opacity !== undefined && element.opacity !== 1) {
+                el.style.opacity = element.opacity;
+            }
+
             if (element.type === 'text') {
                 el.classList.add('text-element');
                 el.textContent = element.content;
@@ -1780,6 +1854,14 @@
             resizeHandle.className = 'resize-handle';
             el.appendChild(resizeHandle);
 
+            // Add rotation handle (for non-background elements)
+            if (element.type !== 'background' && element.zIndex !== -1) {
+                const rotateHandle = document.createElement('div');
+                rotateHandle.className = 'rotate-handle';
+                rotateHandle.innerHTML = '&#8635;';
+                el.appendChild(rotateHandle);
+            }
+
             // Add delete handle
             const deleteHandle = document.createElement('div');
             deleteHandle.className = 'delete-handle';
@@ -1790,7 +1872,7 @@
             };
             el.appendChild(deleteHandle);
 
-            // Make draggable
+            // Make draggable and rotatable
             makeDraggable(el, element);
 
             // Make selectable
@@ -1805,7 +1887,10 @@
         function makeDraggable(el, element) {
             let isDragging = false;
             let isResizing = false;
+            let isRotating = false;
             let startX, startY, startWidth, startHeight;
+            let startAngle = 0;
+            let centerX, centerY;
 
             el.onmousedown = function(e) {
                 if (e.target.classList.contains('resize-handle')) {
@@ -1814,6 +1899,13 @@
                     startY = e.clientY;
                     startWidth = el.offsetWidth;
                     startHeight = el.offsetHeight;
+                } else if (e.target.classList.contains('rotate-handle')) {
+                    isRotating = true;
+                    const rect = el.getBoundingClientRect();
+                    centerX = rect.left + rect.width / 2;
+                    centerY = rect.top + rect.height / 2;
+                    startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+                    startAngle -= element.rotation || 0;
                 } else if (!e.target.classList.contains('delete-handle')) {
                     isDragging = true;
                     startX = e.clientX - el.offsetLeft;
@@ -1857,12 +1949,25 @@
                             el.style.fontSize = element.fontSize + 'px';
                         }
                     }
+                } else if (isRotating) {
+                    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+                    let rotation = angle - startAngle;
+                    // Snap to 15 degree increments when holding shift
+                    if (e.shiftKey) {
+                        rotation = Math.round(rotation / 15) * 15;
+                    }
+                    element.rotation = rotation;
+                    el.style.transform = `rotate(${rotation}deg)`;
                 }
             };
 
             document.onmouseup = function() {
                 isDragging = false;
                 isResizing = false;
+                isRotating = false;
+                if (selectedElement) {
+                    updatePropertiesPanel();
+                }
             };
         }
 
@@ -1990,15 +2095,15 @@
                     <div class="form-group">
                         <label class="form-label" data-i18n="textColor">${translations[currentLang].textColor}</label>
                         <div class="color-picker-group">
-                            <input type="color" class="color-input" value="${element.color}" onchange="updateElementProperty('color', this.value)">
-                            <input type="text" class="form-input" style="flex: 1;" value="${element.color}" onchange="updateElementProperty('color', this.value)">
+                            <input type="color" class="color-input" value="${element.color}" oninput="updateElementProperty('color', this.value)">
+                            <input type="text" class="form-input" style="flex: 1;" value="${element.color}" oninput="updateElementProperty('color', this.value)">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" data-i18n="backgroundColor">${translations[currentLang].backgroundColor}</label>
                         <div class="color-picker-group">
-                            <input type="color" class="color-input" value="${element.backgroundColor || '#ffffff'}" onchange="updateElementProperty('backgroundColor', this.value)">
-                            <input type="text" class="form-input" style="flex: 1;" value="${element.backgroundColor || 'transparent'}" onchange="updateElementProperty('backgroundColor', this.value)">
+                            <input type="color" class="color-input" value="${element.backgroundColor || '#ffffff'}" oninput="updateElementProperty('backgroundColor', this.value)">
+                            <input type="text" class="form-input" style="flex: 1;" value="${element.backgroundColor || 'transparent'}" oninput="updateElementProperty('backgroundColor', this.value)">
                         </div>
                     </div>
                     <div class="form-group">
@@ -2019,6 +2124,36 @@
                             <option value="right" ${element.textAlign === 'right' ? 'selected' : ''}>Right</option>
                             <option value="justify" ${element.textAlign === 'justify' ? 'selected' : ''}>Justify</option>
                         </select>
+                    </div>
+                `;
+            }
+
+            // Add opacity for image/logo elements
+            if (element.type === 'image' || element.type === 'logo' || element.type === 'shape') {
+                html += `
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="opacity">${translations[currentLang].opacity}</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="range" min="0" max="1" step="0.1" value="${element.opacity !== undefined ? element.opacity : 1}"
+                                oninput="updateElementProperty('opacity', this.value); this.nextElementSibling.textContent = Math.round(this.value * 100) + '%';"
+                                style="flex: 1;">
+                            <span style="font-size: 12px; min-width: 40px;">${Math.round((element.opacity !== undefined ? element.opacity : 1) * 100)}%</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Add rotation for non-background elements
+            if (element.type !== 'background' && element.zIndex !== -1) {
+                html += `
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="rotation">${translations[currentLang].rotation}</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="range" min="-180" max="180" step="1" value="${element.rotation || 0}"
+                                oninput="updateElementProperty('rotation', this.value); this.nextElementSibling.textContent = this.value + '°';"
+                                style="flex: 1;">
+                            <span style="font-size: 12px; min-width: 40px;">${element.rotation || 0}°</span>
+                        </div>
                     </div>
                 `;
             }
@@ -2044,7 +2179,7 @@
             if (!element) return;
 
             // Convert numeric values
-            if (property === 'fontSize' || property === 'width' || property === 'height') {
+            if (property === 'fontSize' || property === 'width' || property === 'height' || property === 'rotation' || property === 'opacity') {
                 value = parseFloat(value);
             }
 
