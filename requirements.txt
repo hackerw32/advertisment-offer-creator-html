@@ -1,0 +1,9 @@
+# Brochure Generator Requirements
+# Install with: pip install -r requirements.txt
+
+# Core requirements
+Pillow>=9.0.0           # Image processing and rendering
+reportlab>=3.6.0        # PDF generation with proper imposition
+
+# Optional but recommended for better font support
+# fonttools>=4.0.0      # Better font handling
