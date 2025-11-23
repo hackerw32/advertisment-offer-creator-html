@@ -77,6 +77,8 @@ class TextElement:
     italic: bool = False
     alignment: str = "center"  # left, center, right
     max_width: float = 90  # Percentage of page width
+    rotation: float = 0  # Rotation in degrees
+    layer_index: int = 0  # For z-ordering (higher = on top)
 
 
 @dataclass
@@ -89,7 +91,9 @@ class ImageElement:
     width: float = 50  # Percentage of page width
     height: float = 50  # Percentage of page height
     opacity: float = 1.0
+    rotation: float = 0  # Rotation in degrees
     fit_mode: str = "cover"  # cover, contain, stretch
+    layer_index: int = 0  # For z-ordering (higher = on top)
 
 
 @dataclass
@@ -105,6 +109,7 @@ class ShapeElement:
     stroke_width: int = 2
     opacity: float = 1.0
     rotation: float = 0
+    layer_index: int = 0  # For z-ordering (higher = on top)
 
 
 @dataclass
@@ -181,9 +186,9 @@ class CorporateTemplate(Template):
                 ]
                 page.text_elements = [
                     TextElement("Contact Us", 50, 30, "Arial", 28, "#ffffff", True, False, "center"),
-                    TextElement("📍 123 Business Street", 50, 45, "Arial", 14, "#ffffff", False, False, "center"),
-                    TextElement("📞 +30 210 1234567", 50, 52, "Arial", 14, "#ffffff", False, False, "center"),
-                    TextElement("✉ info@example.com", 50, 59, "Arial", 14, "#ffffff", False, False, "center"),
+                    TextElement("Location: 123 Business Street", 50, 45, "Arial", 14, "#ffffff", False, False, "center"),
+                    TextElement("Phone: +30 210 1234567", 50, 52, "Arial", 14, "#ffffff", False, False, "center"),
+                    TextElement("Email: info@example.com", 50, 59, "Arial", 14, "#ffffff", False, False, "center"),
                     TextElement("© 2024 Company Name", 50, 85, "Arial", 10, "#ffffff", False, False, "center"),
                 ]
             else:  # Content pages
@@ -263,7 +268,7 @@ class CreativeTemplate(Template):
                     TextElement(f"Our Work #{i}", 50, 12, "Arial", 28, primary_color, True, False, "center"),
                     TextElement("We bring your ideas to life with\ninnovative design solutions.", 50, 30, "Arial", 13, accent_color, False, False, "center"),
                     TextElement("Services:", 15, 45, "Arial", 18, primary_color, True, False, "left"),
-                    TextElement("✦ Brand Identity\n✦ Web Design\n✦ Print Materials\n✦ Marketing", 15, 60, "Arial", 12, accent_color, False, False, "left"),
+                    TextElement("- Brand Identity\n- Web Design\n- Print Materials\n- Marketing", 15, 60, "Arial", 12, accent_color, False, False, "left"),
                 ]
 
         brochure.template_name = self.name
@@ -303,7 +308,7 @@ class ElegantTemplate(Template):
                     ShapeElement("rectangle", 50, 55, 40, 0.5, gold_color, gold_color, 0, 1.0),
                 ]
                 page.text_elements = [
-                    TextElement("✦", 50, 25, "Arial", 24, gold_color, False, False, "center"),
+                    TextElement("*", 50, 25, "Arial", 24, gold_color, False, False, "center"),
                     TextElement("MAISON", 50, 38, "Arial", 42, "#ffffff", True, False, "center"),
                     TextElement("ÉLÉGANCE", 50, 50, "Arial", 28, gold_color, False, True, "center"),
                     TextElement("Luxury Redefined", 50, 65, "Arial", 14, "#a0a0a0", False, False, "center"),
@@ -334,7 +339,7 @@ class ElegantTemplate(Template):
                     TextElement(f"Collection {i}", 50, 15, "Arial", 26, dark_color, True, False, "center"),
                     TextElement("Experience the extraordinary", 50, 25, "Arial", 12, gold_color, False, True, "center"),
                     TextElement("Discover our curated selection of\nexquisite pieces, crafted with precision\nand an unwavering commitment to excellence.", 50, 45, "Arial", 11, "#4a4a4a", False, False, "center"),
-                    TextElement("✦  ✦  ✦", 50, 65, "Arial", 14, gold_color, False, False, "center"),
+                    TextElement("*  *  *", 50, 65, "Arial", 14, gold_color, False, False, "center"),
                     TextElement("Quality • Craftsmanship • Heritage", 50, 80, "Arial", 10, dark_color, False, False, "center"),
                 ]
 
@@ -429,10 +434,10 @@ class NatureOrganicTemplate(Template):
                     ShapeElement("circle", 50, 25, 8, 8, cream, cream, 0, 0.8),
                 ]
                 page.text_elements = [
-                    TextElement("🌿", 50, 20, "Arial", 32, cream, False, False, "center"),
+                    TextElement("*", 50, 20, "Arial", 32, cream, False, False, "center"),
                     TextElement("TERRA", 50, 38, "Arial", 44, cream, True, False, "center"),
                     TextElement("BOTANICA", 50, 52, "Arial", 24, sage, False, False, "center"),
-                    TextElement("Natural • Organic • Sustainable", 50, 70, "Arial", 11, "#c8d6b9", False, False, "center"),
+                    TextElement("Natural - Organic - Sustainable", 50, 70, "Arial", 11, "#c8d6b9", False, False, "center"),
                 ]
             elif i == len(brochure.pages) - 1:  # Back
                 page.background_gradient = (earth, "#6b5344", "vertical")
@@ -455,10 +460,10 @@ class NatureOrganicTemplate(Template):
                     ShapeElement("rectangle", 50, 50, 50, 0.5, earth, earth, 0, 0.5),
                 ]
                 page.text_elements = [
-                    TextElement("🌱", 50, 10, "Arial", 24, forest_green, False, False, "center"),
+                    TextElement("+", 50, 10, "Arial", 24, forest_green, False, False, "center"),
                     TextElement(f"Our Promise #{i}", 50, 20, "Arial", 24, forest_green, True, False, "center"),
                     TextElement("We believe in harmony with nature.\nEvery product is crafted with care\nfor you and the environment.", 50, 38, "Arial", 11, "#5a5a5a", False, False, "center"),
-                    TextElement("✓ 100% Organic\n✓ Sustainably Sourced\n✓ Eco-Friendly Packaging", 25, 65, "Arial", 11, forest_green, False, False, "left"),
+                    TextElement("+ 100% Organic\n+ Sustainably Sourced\n+ Eco-Friendly Packaging", 25, 65, "Arial", 11, forest_green, False, False, "left"),
                 ]
 
         brochure.template_name = self.name
@@ -600,29 +605,224 @@ class BrochureRenderer:
         return img
 
     def render_page(self, page: PageData) -> Image.Image:
-        """Render a single page to an image"""
+        """Render a single page to an image with layer support"""
         # Create base image with background
         if page.background_gradient:
             img = self.create_gradient(*page.background_gradient)
         else:
             img = Image.new('RGB', (self.width, self.height), self.hex_to_rgb(page.background_color))
 
-        # Create transparent overlay for alpha compositing
-        overlay = Image.new('RGBA', (self.width, self.height), (0, 0, 0, 0))
-        overlay_draw = ImageDraw.Draw(overlay)
+        # Convert to RGBA for compositing
+        img = img.convert('RGBA')
 
-        # Render shapes
+        # Collect all elements with their layer indices for z-ordering
+        all_elements = []
+
+        # Add shapes
         for shape in page.shape_elements:
-            self._render_shape(overlay_draw, shape)
+            layer_idx = getattr(shape, 'layer_index', 0)
+            all_elements.append(('shape', shape, layer_idx))
 
-        # Composite overlay onto base image
-        img = Image.alpha_composite(img.convert('RGBA'), overlay)
+        # Add images
+        for image in page.image_elements:
+            layer_idx = getattr(image, 'layer_index', 0)
+            all_elements.append(('image', image, layer_idx))
 
-        # Render text
-        for text_elem in page.text_elements:
-            self._render_text(img, text_elem)
+        # Add text elements
+        for text in page.text_elements:
+            layer_idx = getattr(text, 'layer_index', 0)
+            all_elements.append(('text', text, layer_idx))
+
+        # Sort by layer index (lower layers rendered first, higher on top)
+        all_elements.sort(key=lambda x: x[2])
+
+        # Render each element in order
+        for elem_type, elem, _ in all_elements:
+            if elem_type == 'shape':
+                img = self._render_shape_to_image(img, elem)
+            elif elem_type == 'image':
+                img = self._render_image_element(img, elem)
+            elif elem_type == 'text':
+                img = self._render_text_to_image(img, elem)
 
         return img.convert('RGB')
+
+    def _render_shape_to_image(self, img: Image.Image, shape: ShapeElement) -> Image.Image:
+        """Render a shape element with rotation support"""
+        x = int(shape.x / 100 * self.width)
+        y = int(shape.y / 100 * self.height)
+        w = int(shape.width / 100 * self.width)
+        h = int(shape.height / 100 * self.height)
+
+        # Create a temporary image for the shape (larger to accommodate rotation)
+        padding = max(w, h)
+        temp_size = (w + padding * 2, h + padding * 2)
+        temp_img = Image.new('RGBA', temp_size, (0, 0, 0, 0))
+        temp_draw = ImageDraw.Draw(temp_img)
+
+        if shape.fill_color == "transparent":
+            fill = None
+        else:
+            fill = self.hex_to_rgba(shape.fill_color, shape.opacity)
+
+        outline = self.hex_to_rgba(shape.stroke_color, shape.opacity) if shape.stroke_width > 0 else None
+
+        # Draw shape centered in temp image
+        cx, cy = temp_size[0] // 2, temp_size[1] // 2
+
+        if shape.shape_type == "rectangle":
+            x1, y1 = cx - w // 2, cy - h // 2
+            x2, y2 = cx + w // 2, cy + h // 2
+            temp_draw.rectangle([x1, y1, x2, y2], fill=fill, outline=outline, width=shape.stroke_width)
+        elif shape.shape_type == "circle":
+            x1, y1 = cx - w // 2, cy - h // 2
+            x2, y2 = cx + w // 2, cy + h // 2
+            temp_draw.ellipse([x1, y1, x2, y2], fill=fill, outline=outline, width=shape.stroke_width)
+        elif shape.shape_type == "triangle":
+            points = [
+                (cx, cy - h // 2),
+                (cx - w // 2, cy + h // 2),
+                (cx + w // 2, cy + h // 2)
+            ]
+            temp_draw.polygon(points, fill=fill, outline=outline)
+        elif shape.shape_type == "line":
+            temp_draw.line([(cx - w // 2, cy), (cx + w // 2, cy)], fill=fill, width=shape.stroke_width)
+
+        # Apply rotation if needed
+        rotation = getattr(shape, 'rotation', 0)
+        if rotation != 0:
+            temp_img = temp_img.rotate(-rotation, resample=Image.Resampling.BICUBIC, expand=False)
+
+        # Paste onto main image
+        paste_x = x - temp_size[0] // 2
+        paste_y = y - temp_size[1] // 2
+        img.paste(temp_img, (paste_x, paste_y), temp_img)
+
+        return img
+
+    def _render_image_element(self, img: Image.Image, image_elem: ImageElement) -> Image.Image:
+        """Render an image element with rotation, resize, and opacity support"""
+        try:
+            # Load image from path or data
+            if image_elem.image_path and os.path.exists(image_elem.image_path):
+                source_img = Image.open(image_elem.image_path)
+            elif image_elem.image_data:
+                source_img = Image.open(io.BytesIO(image_elem.image_data))
+            else:
+                return img
+
+            # Convert to RGBA
+            source_img = source_img.convert('RGBA')
+
+            # Calculate target size
+            target_w = int(image_elem.width / 100 * self.width)
+            target_h = int(image_elem.height / 100 * self.height)
+
+            # Resize based on fit mode
+            if image_elem.fit_mode == "stretch":
+                source_img = source_img.resize((target_w, target_h), Image.Resampling.LANCZOS)
+            elif image_elem.fit_mode == "contain":
+                source_img.thumbnail((target_w, target_h), Image.Resampling.LANCZOS)
+            else:  # cover
+                # Scale to cover the target area
+                img_ratio = source_img.width / source_img.height
+                target_ratio = target_w / target_h
+                if img_ratio > target_ratio:
+                    new_h = target_h
+                    new_w = int(new_h * img_ratio)
+                else:
+                    new_w = target_w
+                    new_h = int(new_w / img_ratio)
+                source_img = source_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+                # Crop to target size
+                left = (source_img.width - target_w) // 2
+                top = (source_img.height - target_h) // 2
+                source_img = source_img.crop((left, top, left + target_w, top + target_h))
+
+            # Apply opacity
+            if image_elem.opacity < 1.0:
+                alpha = source_img.split()[3]
+                alpha = alpha.point(lambda p: int(p * image_elem.opacity))
+                source_img.putalpha(alpha)
+
+            # Apply rotation
+            rotation = getattr(image_elem, 'rotation', 0)
+            if rotation != 0:
+                source_img = source_img.rotate(-rotation, resample=Image.Resampling.BICUBIC, expand=True)
+
+            # Calculate position
+            x = int(image_elem.x / 100 * self.width) - source_img.width // 2
+            y = int(image_elem.y / 100 * self.height) - source_img.height // 2
+
+            # Paste onto main image
+            img.paste(source_img, (x, y), source_img)
+
+        except Exception as e:
+            print(f"Error rendering image: {e}")
+
+        return img
+
+    def _render_text_to_image(self, img: Image.Image, text_elem: TextElement) -> Image.Image:
+        """Render a text element with rotation support"""
+        font = self.get_font(text_elem.font_family, text_elem.font_size, text_elem.bold, text_elem.italic)
+
+        # Calculate position
+        x = int(text_elem.x / 100 * self.width)
+        y = int(text_elem.y / 100 * self.height)
+
+        # Handle multiline text
+        lines = text_elem.text.split('\n')
+
+        # Create temporary draw to measure text
+        temp_draw = ImageDraw.Draw(img)
+
+        # Calculate total dimensions
+        line_heights = []
+        line_widths = []
+        for line in lines:
+            bbox = temp_draw.textbbox((0, 0), line, font=font)
+            line_heights.append(bbox[3] - bbox[1])
+            line_widths.append(bbox[2] - bbox[0])
+
+        total_height = sum(line_heights) + (len(lines) - 1) * 5
+        max_width = max(line_widths) if line_widths else 0
+
+        # Create temporary image for text (to support rotation)
+        padding = 20
+        temp_size = (max_width + padding * 2, total_height + padding * 2)
+        text_img = Image.new('RGBA', temp_size, (0, 0, 0, 0))
+        text_draw = ImageDraw.Draw(text_img)
+
+        fill_color = self.hex_to_rgb(text_elem.font_color)
+        current_y = padding
+
+        for i, line in enumerate(lines):
+            bbox = text_draw.textbbox((0, 0), line, font=font)
+            text_width = bbox[2] - bbox[0]
+
+            if text_elem.alignment == "center":
+                text_x = (temp_size[0] - text_width) // 2
+            elif text_elem.alignment == "right":
+                text_x = temp_size[0] - padding - text_width
+            else:  # left
+                text_x = padding
+
+            text_draw.text((text_x, current_y), line, font=font, fill=fill_color)
+            current_y += line_heights[i] + 5
+
+        # Apply rotation if needed
+        rotation = getattr(text_elem, 'rotation', 0)
+        if rotation != 0:
+            text_img = text_img.rotate(-rotation, resample=Image.Resampling.BICUBIC, expand=True)
+
+        # Calculate paste position
+        paste_x = x - text_img.width // 2
+        paste_y = y - text_img.height // 2
+
+        # Paste onto main image
+        img.paste(text_img, (paste_x, paste_y), text_img)
+
+        return img
 
     def _render_shape(self, draw: ImageDraw.Draw, shape: ShapeElement):
         """Render a shape element"""
@@ -780,6 +980,187 @@ class BookletImposition:
                 else:
                     pairs.append((i, -1, f"Page {i+1}"))
             return pairs
+
+
+class RealTimeColorPicker:
+    """Custom color picker with real-time preview callback"""
+
+    def __init__(self, parent, initial_color="#ffffff", callback=None, title="Choose Color"):
+        self.callback = callback
+        self.result = None
+        self.current_color = initial_color
+
+        # Create popup window
+        self.window = tk.Toplevel(parent)
+        self.window.title(title)
+        self.window.geometry("400x350")
+        self.window.resizable(False, False)
+        self.window.transient(parent)
+        self.window.grab_set()
+
+        # Parse initial color
+        self.h, self.s, self.v = self._hex_to_hsv(initial_color)
+
+        self._create_ui()
+        self._update_preview()
+
+    def _hex_to_hsv(self, hex_color):
+        """Convert hex color to HSV"""
+        hex_color = hex_color.lstrip('#')
+        r, g, b = tuple(int(hex_color[i:i+2], 16) / 255.0 for i in (0, 2, 4))
+
+        max_c = max(r, g, b)
+        min_c = min(r, g, b)
+        diff = max_c - min_c
+
+        if diff == 0:
+            h = 0
+        elif max_c == r:
+            h = (60 * ((g - b) / diff) + 360) % 360
+        elif max_c == g:
+            h = (60 * ((b - r) / diff) + 120) % 360
+        else:
+            h = (60 * ((r - g) / diff) + 240) % 360
+
+        s = 0 if max_c == 0 else diff / max_c
+        v = max_c
+
+        return h, s, v
+
+    def _hsv_to_hex(self, h, s, v):
+        """Convert HSV to hex color"""
+        c = v * s
+        x = c * (1 - abs((h / 60) % 2 - 1))
+        m = v - c
+
+        if h < 60:
+            r, g, b = c, x, 0
+        elif h < 120:
+            r, g, b = x, c, 0
+        elif h < 180:
+            r, g, b = 0, c, x
+        elif h < 240:
+            r, g, b = 0, x, c
+        elif h < 300:
+            r, g, b = x, 0, c
+        else:
+            r, g, b = c, 0, x
+
+        r, g, b = int((r + m) * 255), int((g + m) * 255), int((b + m) * 255)
+        return f"#{r:02x}{g:02x}{b:02x}"
+
+    def _create_ui(self):
+        """Create the color picker UI"""
+        main_frame = tk.Frame(self.window, bg='#2d2d2d')
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Hue slider
+        tk.Label(main_frame, text="Hue:", bg='#2d2d2d', fg='white').pack(anchor=tk.W)
+        self.hue_var = tk.DoubleVar(value=self.h)
+        self.hue_scale = tk.Scale(main_frame, from_=0, to=359, orient=tk.HORIZONTAL,
+                                   variable=self.hue_var, command=self._on_color_change,
+                                   bg='#2d2d2d', fg='white', highlightthickness=0,
+                                   troughcolor='#444444', length=350)
+        self.hue_scale.pack(fill=tk.X)
+
+        # Saturation slider
+        tk.Label(main_frame, text="Saturation:", bg='#2d2d2d', fg='white').pack(anchor=tk.W)
+        self.sat_var = tk.DoubleVar(value=self.s * 100)
+        self.sat_scale = tk.Scale(main_frame, from_=0, to=100, orient=tk.HORIZONTAL,
+                                   variable=self.sat_var, command=self._on_color_change,
+                                   bg='#2d2d2d', fg='white', highlightthickness=0,
+                                   troughcolor='#444444', length=350)
+        self.sat_scale.pack(fill=tk.X)
+
+        # Value/Brightness slider
+        tk.Label(main_frame, text="Brightness:", bg='#2d2d2d', fg='white').pack(anchor=tk.W)
+        self.val_var = tk.DoubleVar(value=self.v * 100)
+        self.val_scale = tk.Scale(main_frame, from_=0, to=100, orient=tk.HORIZONTAL,
+                                   variable=self.val_var, command=self._on_color_change,
+                                   bg='#2d2d2d', fg='white', highlightthickness=0,
+                                   troughcolor='#444444', length=350)
+        self.val_scale.pack(fill=tk.X)
+
+        # Color preview
+        preview_frame = tk.Frame(main_frame, bg='#2d2d2d')
+        preview_frame.pack(fill=tk.X, pady=10)
+
+        tk.Label(preview_frame, text="Preview:", bg='#2d2d2d', fg='white').pack(side=tk.LEFT)
+        self.preview_label = tk.Label(preview_frame, width=10, height=2, bg=self.current_color)
+        self.preview_label.pack(side=tk.LEFT, padx=10)
+
+        self.hex_label = tk.Label(preview_frame, text=self.current_color, bg='#2d2d2d', fg='white')
+        self.hex_label.pack(side=tk.LEFT)
+
+        # Hex entry
+        hex_entry_frame = tk.Frame(main_frame, bg='#2d2d2d')
+        hex_entry_frame.pack(fill=tk.X, pady=5)
+
+        tk.Label(hex_entry_frame, text="Hex:", bg='#2d2d2d', fg='white').pack(side=tk.LEFT)
+        self.hex_entry = tk.Entry(hex_entry_frame, width=10, bg='#444444', fg='white')
+        self.hex_entry.insert(0, self.current_color)
+        self.hex_entry.pack(side=tk.LEFT, padx=5)
+        self.hex_entry.bind('<Return>', self._on_hex_entry)
+
+        # Buttons
+        button_frame = tk.Frame(main_frame, bg='#2d2d2d')
+        button_frame.pack(fill=tk.X, pady=10)
+
+        tk.Button(button_frame, text="OK", command=self._on_ok,
+                 bg='#4CAF50', fg='white', width=10).pack(side=tk.LEFT, padx=5)
+        tk.Button(button_frame, text="Cancel", command=self._on_cancel,
+                 bg='#f44336', fg='white', width=10).pack(side=tk.LEFT, padx=5)
+
+    def _on_color_change(self, *args):
+        """Handle color change from sliders"""
+        self.h = self.hue_var.get()
+        self.s = self.sat_var.get() / 100
+        self.v = self.val_var.get() / 100
+        self._update_preview()
+
+        # Call real-time callback
+        if self.callback:
+            self.callback(self.current_color)
+
+    def _update_preview(self):
+        """Update color preview"""
+        self.current_color = self._hsv_to_hex(self.h, self.s, self.v)
+        self.preview_label.configure(bg=self.current_color)
+        self.hex_label.configure(text=self.current_color)
+        self.hex_entry.delete(0, tk.END)
+        self.hex_entry.insert(0, self.current_color)
+
+    def _on_hex_entry(self, event):
+        """Handle hex entry"""
+        hex_val = self.hex_entry.get().strip()
+        if not hex_val.startswith('#'):
+            hex_val = '#' + hex_val
+        if len(hex_val) == 7:
+            try:
+                self.h, self.s, self.v = self._hex_to_hsv(hex_val)
+                self.hue_var.set(self.h)
+                self.sat_var.set(self.s * 100)
+                self.val_var.set(self.v * 100)
+                self._update_preview()
+                if self.callback:
+                    self.callback(self.current_color)
+            except ValueError:
+                pass
+
+    def _on_ok(self):
+        """Handle OK button"""
+        self.result = self.current_color
+        self.window.destroy()
+
+    def _on_cancel(self):
+        """Handle Cancel button"""
+        self.result = None
+        self.window.destroy()
+
+    def get_color(self):
+        """Wait for dialog and return selected color"""
+        self.window.wait_window()
+        return self.result
 
 
 class BrochureGeneratorApp:
@@ -1030,17 +1411,24 @@ A5 booklet with pages in order.
         ttk.Label(parent, text="Add Elements:", style='Dark.TLabel').pack(anchor=tk.W, pady=(10, 5), padx=10)
 
         # Add text button
-        add_text_btn = tk.Button(parent, text="📝 Add Text",
+        add_text_btn = tk.Button(parent, text="[T] Add Text",
                                 bg=self.colors['bg_light'], fg='white',
                                 font=('Segoe UI', 10),
                                 command=self._add_text_element, cursor='hand2')
         add_text_btn.pack(fill=tk.X, padx=10, pady=3)
 
+        # Add image button
+        add_img_btn = tk.Button(parent, text="[+] Import Image",
+                               bg=self.colors['accent'], fg='white',
+                               font=('Segoe UI', 10, 'bold'),
+                               command=self._import_image, cursor='hand2')
+        add_img_btn.pack(fill=tk.X, padx=10, pady=3)
+
         # Add shape buttons
         shapes_frame = ttk.Frame(parent, style='Dark.TFrame')
         shapes_frame.pack(fill=tk.X, padx=10, pady=5)
 
-        for shape, label in [("rectangle", "▬ Rectangle"), ("circle", "⬤ Circle"), ("triangle", "▲ Triangle")]:
+        for shape, label in [("rectangle", "[=] Rectangle"), ("circle", "[O] Circle"), ("triangle", "[^] Triangle")]:
             btn = tk.Button(shapes_frame, text=label,
                            bg=self.colors['bg_light'], fg='white',
                            font=('Segoe UI', 9),
@@ -1162,8 +1550,23 @@ A5 booklet with pages in order.
                                             style='Dark.TLabel')
         self.no_selection_label.pack(pady=50)
 
-        # Element list
-        ttk.Label(sidebar, text="Page Elements:", style='Dark.TLabel').pack(anchor=tk.W, padx=10, pady=(10, 5))
+        # Element list with page indicator
+        self.elements_header_frame = ttk.Frame(sidebar, style='Dark.TFrame')
+        self.elements_header_frame.pack(fill=tk.X, padx=10, pady=(10, 5))
+
+        self.elements_header_label = tk.Label(self.elements_header_frame,
+                                               text="Page Elements for ",
+                                               bg=self.colors['bg_dark'],
+                                               fg=self.colors['text'],
+                                               font=('Segoe UI', 10))
+        self.elements_header_label.pack(side=tk.LEFT)
+
+        self.page_number_label = tk.Label(self.elements_header_frame,
+                                           text=f"Page {self.current_page_index + 1}",
+                                           bg=self.colors['bg_dark'],
+                                           fg=self.colors['accent'],
+                                           font=('Segoe UI', 10, 'bold'))
+        self.page_number_label.pack(side=tk.LEFT)
 
         self.elements_listbox = tk.Listbox(sidebar, bg=self.colors['bg_light'],
                                            fg=self.colors['text'],
@@ -1247,23 +1650,44 @@ A5 booklet with pages in order.
         self._update_elements_list()
 
     def _change_bg_color(self):
-        """Change the background color of the current page"""
+        """Change the background color of the current page with real-time preview"""
         page = self.brochure.pages[self.current_page_index]
-        color = colorchooser.askcolor(page.background_color, title="Choose Background Color")
-        if color[1]:
-            page.background_color = color[1]
-            page.background_gradient = None  # Clear gradient
+        original_color = page.background_color
+        original_gradient = page.background_gradient
+
+        def on_color_change(color):
+            page.background_color = color
+            page.background_gradient = None
+            self._update_preview()
+
+        picker = RealTimeColorPicker(self.root, original_color, on_color_change, "Background Color")
+        result = picker.get_color()
+
+        if result is None:
+            # User cancelled - revert to original
+            page.background_color = original_color
+            page.background_gradient = original_gradient
             self._update_preview()
 
     def _change_grad_color(self, which: int):
-        """Change gradient color"""
+        """Change gradient color with real-time preview"""
         current = self.grad_color1_btn.cget('bg') if which == 1 else self.grad_color2_btn.cget('bg')
-        color = colorchooser.askcolor(current, title=f"Choose Gradient Color {which}")
-        if color[1]:
+        page = self.brochure.pages[self.current_page_index]
+
+        def on_color_change(color):
             if which == 1:
-                self.grad_color1_btn.configure(bg=color[1])
+                self.grad_color1_btn.configure(bg=color)
             else:
-                self.grad_color2_btn.configure(bg=color[1])
+                self.grad_color2_btn.configure(bg=color)
+            # Apply gradient preview
+            color1 = self.grad_color1_btn.cget('bg')
+            color2 = self.grad_color2_btn.cget('bg')
+            direction = self.grad_dir_var.get()
+            page.background_gradient = (color1, color2, direction)
+            self._update_preview()
+
+        picker = RealTimeColorPicker(self.root, current, on_color_change, f"Gradient Color {which}")
+        picker.get_color()
 
     def _apply_gradient(self):
         """Apply gradient to current page"""
@@ -1316,14 +1740,35 @@ A5 booklet with pages in order.
         """Update the elements listbox"""
         self.elements_listbox.delete(0, tk.END)
 
+        # Update page number label
+        self.page_number_label.configure(text=f"Page {self.current_page_index + 1}")
+
         page = self.brochure.pages[self.current_page_index]
 
+        # Collect all elements with layer info for display
+        elements_display = []
+
         for i, shape in enumerate(page.shape_elements):
-            self.elements_listbox.insert(tk.END, f"🔷 {shape.shape_type.title()} {i+1}")
+            layer = getattr(shape, 'layer_index', 0)
+            elements_display.append(('shape', i, f"[L{layer}] {shape.shape_type.title()} {i+1}", layer))
+
+        for i, img in enumerate(page.image_elements):
+            layer = getattr(img, 'layer_index', 0)
+            name = os.path.basename(img.image_path) if img.image_path else f"Image {i+1}"
+            name = name[:15] + "..." if len(name) > 15 else name
+            elements_display.append(('image', i, f"[L{layer}] IMG: {name}", layer))
 
         for i, text in enumerate(page.text_elements):
-            preview = text.text[:20] + "..." if len(text.text) > 20 else text.text
-            self.elements_listbox.insert(tk.END, f"📝 {preview}")
+            layer = getattr(text, 'layer_index', 0)
+            preview = text.text[:15] + "..." if len(text.text) > 15 else text.text
+            preview = preview.replace('\n', ' ')
+            elements_display.append(('text', i, f"[L{layer}] TXT: {preview}", layer))
+
+        # Sort by layer for display
+        elements_display.sort(key=lambda x: x[3])
+
+        for elem_type, idx, display_text, _ in elements_display:
+            self.elements_listbox.insert(tk.END, display_text)
 
     def _on_element_select(self, event):
         """Handle element selection from listbox"""
@@ -1334,16 +1779,34 @@ A5 booklet with pages in order.
         idx = selection[0]
         page = self.brochure.pages[self.current_page_index]
 
-        # Determine which element was selected
-        shape_count = len(page.shape_elements)
+        # Rebuild elements_display to find which element was selected
+        elements_display = []
 
-        if idx < shape_count:
-            self.selected_element = ('shape', idx)
-            self._show_shape_properties(page.shape_elements[idx])
-        else:
-            text_idx = idx - shape_count
-            self.selected_element = ('text', text_idx)
-            self._show_text_properties(page.text_elements[text_idx])
+        for i, shape in enumerate(page.shape_elements):
+            layer = getattr(shape, 'layer_index', 0)
+            elements_display.append(('shape', i, layer))
+
+        for i, img in enumerate(page.image_elements):
+            layer = getattr(img, 'layer_index', 0)
+            elements_display.append(('image', i, layer))
+
+        for i, text in enumerate(page.text_elements):
+            layer = getattr(text, 'layer_index', 0)
+            elements_display.append(('text', i, layer))
+
+        # Sort by layer (same order as displayed)
+        elements_display.sort(key=lambda x: x[2])
+
+        if idx < len(elements_display):
+            elem_type, elem_idx, _ = elements_display[idx]
+            self.selected_element = (elem_type, elem_idx)
+
+            if elem_type == 'shape':
+                self._show_shape_properties(page.shape_elements[elem_idx])
+            elif elem_type == 'image':
+                self._show_image_properties(page.image_elements[elem_idx])
+            elif elem_type == 'text':
+                self._show_text_properties(page.text_elements[elem_idx])
 
         self._update_preview()
 
@@ -1382,7 +1845,7 @@ A5 booklet with pages in order.
 
         size_var.trace('w', update_size)
 
-        # Color
+        # Color with real-time preview
         ttk.Label(self.properties_frame, text="Color:", style='Dark.TLabel').pack(anchor=tk.W)
 
         color_btn = tk.Button(self.properties_frame, text="Choose Color",
@@ -1391,11 +1854,13 @@ A5 booklet with pages in order.
         color_btn.pack(anchor=tk.W, pady=(0, 10))
 
         def change_color():
-            color = colorchooser.askcolor(text_elem.font_color)
-            if color[1]:
-                text_elem.font_color = color[1]
-                color_btn.configure(bg=color[1])
+            def on_color_change(color):
+                text_elem.font_color = color
+                color_btn.configure(bg=color)
                 self._update_preview()
+
+            picker = RealTimeColorPicker(self.root, text_elem.font_color, on_color_change, "Text Color")
+            picker.get_color()
 
         color_btn.configure(command=change_color)
 
@@ -1444,6 +1909,37 @@ A5 booklet with pages in order.
 
         align_var.trace('w', update_align)
 
+        # Rotation
+        ttk.Label(self.properties_frame, text="Rotation (degrees):", style='Dark.TLabel').pack(anchor=tk.W)
+
+        rotation_var = tk.DoubleVar(value=getattr(text_elem, 'rotation', 0))
+        rotation_scale = tk.Scale(self.properties_frame, from_=0, to=360, resolution=1,
+                                 orient=tk.HORIZONTAL, variable=rotation_var,
+                                 bg=self.colors['bg_dark'], fg=self.colors['text'],
+                                 highlightthickness=0, troughcolor=self.colors['bg_light'])
+        rotation_scale.pack(fill=tk.X, pady=(0, 10))
+
+        def update_rotation(*args):
+            text_elem.rotation = rotation_var.get()
+            self._update_preview()
+
+        rotation_var.trace('w', update_rotation)
+
+        # Layer
+        ttk.Label(self.properties_frame, text="Layer (z-order):", style='Dark.TLabel').pack(anchor=tk.W)
+
+        layer_var = tk.IntVar(value=getattr(text_elem, 'layer_index', 0))
+        layer_spin = tk.Spinbox(self.properties_frame, from_=-100, to=100, textvariable=layer_var, width=10,
+                               bg=self.colors['bg_light'], fg=self.colors['text'])
+        layer_spin.pack(anchor=tk.W, pady=(0, 10))
+
+        def update_layer(*args):
+            text_elem.layer_index = layer_var.get()
+            self._update_preview()
+            self._update_elements_list()
+
+        layer_var.trace('w', update_layer)
+
     def _show_shape_properties(self, shape: ShapeElement):
         """Show shape element properties in the right sidebar"""
         # Clear existing properties
@@ -1453,19 +1949,26 @@ A5 booklet with pages in order.
         ttk.Label(self.properties_frame, text=f"{shape.shape_type.title()} Properties",
                  style='Title.TLabel').pack(pady=(0, 10))
 
-        # Fill color
+        # Fill color with real-time preview
         ttk.Label(self.properties_frame, text="Fill Color:", style='Dark.TLabel').pack(anchor=tk.W)
 
         fill_btn = tk.Button(self.properties_frame, text="Choose Fill",
-                            bg=shape.fill_color, fg='white', cursor='hand2')
+                            bg=shape.fill_color if shape.fill_color != "transparent" else "#888888",
+                            fg='white', cursor='hand2')
         fill_btn.pack(anchor=tk.W, pady=(0, 10))
 
         def change_fill():
-            color = colorchooser.askcolor(shape.fill_color)
-            if color[1]:
-                shape.fill_color = color[1]
-                fill_btn.configure(bg=color[1])
+            def on_color_change(color):
+                shape.fill_color = color
+                fill_btn.configure(bg=color)
                 self._update_preview()
+
+            initial = shape.fill_color if shape.fill_color != "transparent" else "#ffffff"
+            picker = RealTimeColorPicker(self.root, initial, on_color_change, "Fill Color")
+            result = picker.get_color()
+            if result is None:
+                # User cancelled, revert (already applied during preview)
+                pass
 
         fill_btn.configure(command=change_fill)
 
@@ -1521,6 +2024,22 @@ A5 booklet with pages in order.
         w_var.trace('w', update_size)
         h_var.trace('w', update_size)
 
+        # Rotation
+        ttk.Label(self.properties_frame, text="Rotation (degrees):", style='Dark.TLabel').pack(anchor=tk.W)
+
+        rotation_var = tk.DoubleVar(value=getattr(shape, 'rotation', 0))
+        rotation_scale = tk.Scale(self.properties_frame, from_=0, to=360, resolution=1,
+                                 orient=tk.HORIZONTAL, variable=rotation_var,
+                                 bg=self.colors['bg_dark'], fg=self.colors['text'],
+                                 highlightthickness=0, troughcolor=self.colors['bg_light'])
+        rotation_scale.pack(fill=tk.X, pady=(0, 10))
+
+        def update_rotation(*args):
+            shape.rotation = rotation_var.get()
+            self._update_preview()
+
+        rotation_var.trace('w', update_rotation)
+
         # Opacity
         ttk.Label(self.properties_frame, text="Opacity:", style='Dark.TLabel').pack(anchor=tk.W)
 
@@ -1537,6 +2056,209 @@ A5 booklet with pages in order.
 
         opacity_var.trace('w', update_opacity)
 
+        # Layer
+        ttk.Label(self.properties_frame, text="Layer (z-order):", style='Dark.TLabel').pack(anchor=tk.W)
+
+        layer_var = tk.IntVar(value=getattr(shape, 'layer_index', 0))
+        layer_spin = tk.Spinbox(self.properties_frame, from_=-100, to=100, textvariable=layer_var, width=10,
+                               bg=self.colors['bg_light'], fg=self.colors['text'])
+        layer_spin.pack(anchor=tk.W, pady=(0, 10))
+
+        def update_layer(*args):
+            shape.layer_index = layer_var.get()
+            self._update_preview()
+            self._update_elements_list()
+
+        layer_var.trace('w', update_layer)
+
+    def _import_image(self):
+        """Import an image file and add it to the current page"""
+        filetypes = [
+            ("Image files", "*.png *.jpg *.jpeg *.gif *.bmp *.webp"),
+            ("PNG files", "*.png"),
+            ("JPEG files", "*.jpg *.jpeg"),
+            ("All files", "*.*")
+        ]
+
+        filepath = filedialog.askopenfilename(
+            title="Select Image",
+            filetypes=filetypes
+        )
+
+        if filepath:
+            # Create image element
+            page = self.brochure.pages[self.current_page_index]
+
+            # Get max layer index to place new image on top
+            max_layer = 0
+            for elem in page.shape_elements + page.text_elements + page.image_elements:
+                layer = getattr(elem, 'layer_index', 0)
+                max_layer = max(max_layer, layer)
+
+            new_image = ImageElement(
+                image_path=filepath,
+                x=50,
+                y=50,
+                width=30,
+                height=30,
+                opacity=1.0,
+                rotation=0,
+                fit_mode="contain",
+                layer_index=max_layer + 1
+            )
+            page.image_elements.append(new_image)
+
+            self._update_preview()
+            self._update_elements_list()
+
+    def _show_image_properties(self, image_elem: ImageElement):
+        """Show image element properties in the right sidebar"""
+        # Clear existing properties
+        for widget in self.properties_frame.winfo_children():
+            widget.destroy()
+
+        name = os.path.basename(image_elem.image_path) if image_elem.image_path else "Image"
+        ttk.Label(self.properties_frame, text=f"Image: {name[:20]}",
+                 style='Title.TLabel').pack(pady=(0, 10))
+
+        # Position
+        ttk.Label(self.properties_frame, text="Position (%):", style='Dark.TLabel').pack(anchor=tk.W)
+
+        pos_frame = ttk.Frame(self.properties_frame, style='Dark.TFrame')
+        pos_frame.pack(fill=tk.X, pady=(0, 10))
+
+        ttk.Label(pos_frame, text="X:", style='Dark.TLabel').pack(side=tk.LEFT)
+        x_var = tk.IntVar(value=int(image_elem.x))
+        x_spin = tk.Spinbox(pos_frame, from_=0, to=100, textvariable=x_var, width=5,
+                           bg=self.colors['bg_light'], fg=self.colors['text'])
+        x_spin.pack(side=tk.LEFT, padx=5)
+
+        ttk.Label(pos_frame, text="Y:", style='Dark.TLabel').pack(side=tk.LEFT)
+        y_var = tk.IntVar(value=int(image_elem.y))
+        y_spin = tk.Spinbox(pos_frame, from_=0, to=100, textvariable=y_var, width=5,
+                           bg=self.colors['bg_light'], fg=self.colors['text'])
+        y_spin.pack(side=tk.LEFT, padx=5)
+
+        def update_pos(*args):
+            image_elem.x = x_var.get()
+            image_elem.y = y_var.get()
+            self._update_preview()
+
+        x_var.trace('w', update_pos)
+        y_var.trace('w', update_pos)
+
+        # Size
+        ttk.Label(self.properties_frame, text="Size (%):", style='Dark.TLabel').pack(anchor=tk.W)
+
+        size_frame = ttk.Frame(self.properties_frame, style='Dark.TFrame')
+        size_frame.pack(fill=tk.X, pady=(0, 10))
+
+        ttk.Label(size_frame, text="W:", style='Dark.TLabel').pack(side=tk.LEFT)
+        w_var = tk.IntVar(value=int(image_elem.width))
+        w_spin = tk.Spinbox(size_frame, from_=1, to=100, textvariable=w_var, width=5,
+                           bg=self.colors['bg_light'], fg=self.colors['text'])
+        w_spin.pack(side=tk.LEFT, padx=5)
+
+        ttk.Label(size_frame, text="H:", style='Dark.TLabel').pack(side=tk.LEFT)
+        h_var = tk.IntVar(value=int(image_elem.height))
+        h_spin = tk.Spinbox(size_frame, from_=1, to=100, textvariable=h_var, width=5,
+                           bg=self.colors['bg_light'], fg=self.colors['text'])
+        h_spin.pack(side=tk.LEFT, padx=5)
+
+        def update_size(*args):
+            image_elem.width = w_var.get()
+            image_elem.height = h_var.get()
+            self._update_preview()
+
+        w_var.trace('w', update_size)
+        h_var.trace('w', update_size)
+
+        # Rotation
+        ttk.Label(self.properties_frame, text="Rotation (degrees):", style='Dark.TLabel').pack(anchor=tk.W)
+
+        rotation_var = tk.DoubleVar(value=getattr(image_elem, 'rotation', 0))
+        rotation_scale = tk.Scale(self.properties_frame, from_=0, to=360, resolution=1,
+                                 orient=tk.HORIZONTAL, variable=rotation_var,
+                                 bg=self.colors['bg_dark'], fg=self.colors['text'],
+                                 highlightthickness=0, troughcolor=self.colors['bg_light'])
+        rotation_scale.pack(fill=tk.X, pady=(0, 10))
+
+        def update_rotation(*args):
+            image_elem.rotation = rotation_var.get()
+            self._update_preview()
+
+        rotation_var.trace('w', update_rotation)
+
+        # Opacity
+        ttk.Label(self.properties_frame, text="Opacity:", style='Dark.TLabel').pack(anchor=tk.W)
+
+        opacity_var = tk.DoubleVar(value=image_elem.opacity)
+        opacity_scale = tk.Scale(self.properties_frame, from_=0, to=1, resolution=0.1,
+                                orient=tk.HORIZONTAL, variable=opacity_var,
+                                bg=self.colors['bg_dark'], fg=self.colors['text'],
+                                highlightthickness=0, troughcolor=self.colors['bg_light'])
+        opacity_scale.pack(fill=tk.X, pady=(0, 10))
+
+        def update_opacity(*args):
+            image_elem.opacity = opacity_var.get()
+            self._update_preview()
+
+        opacity_var.trace('w', update_opacity)
+
+        # Fit mode
+        ttk.Label(self.properties_frame, text="Fit Mode:", style='Dark.TLabel').pack(anchor=tk.W)
+
+        fit_var = tk.StringVar(value=image_elem.fit_mode)
+        fit_frame = ttk.Frame(self.properties_frame, style='Dark.TFrame')
+        fit_frame.pack(fill=tk.X, pady=(0, 10))
+
+        for mode in ["contain", "cover", "stretch"]:
+            rb = tk.Radiobutton(fit_frame, text=mode.title(), variable=fit_var,
+                               value=mode, bg=self.colors['bg_dark'], fg=self.colors['text'],
+                               selectcolor=self.colors['bg_light'])
+            rb.pack(side=tk.LEFT)
+
+        def update_fit(*args):
+            image_elem.fit_mode = fit_var.get()
+            self._update_preview()
+
+        fit_var.trace('w', update_fit)
+
+        # Layer
+        ttk.Label(self.properties_frame, text="Layer (z-order):", style='Dark.TLabel').pack(anchor=tk.W)
+
+        layer_var = tk.IntVar(value=getattr(image_elem, 'layer_index', 0))
+        layer_spin = tk.Spinbox(self.properties_frame, from_=-100, to=100, textvariable=layer_var, width=10,
+                               bg=self.colors['bg_light'], fg=self.colors['text'])
+        layer_spin.pack(anchor=tk.W, pady=(0, 10))
+
+        def update_layer(*args):
+            image_elem.layer_index = layer_var.get()
+            self._update_preview()
+            self._update_elements_list()
+
+        layer_var.trace('w', update_layer)
+
+        # Replace image button
+        replace_btn = tk.Button(self.properties_frame, text="Replace Image",
+                               bg=self.colors['bg_light'], fg='white',
+                               cursor='hand2')
+        replace_btn.pack(fill=tk.X, pady=5)
+
+        def replace_image():
+            filetypes = [
+                ("Image files", "*.png *.jpg *.jpeg *.gif *.bmp *.webp"),
+                ("All files", "*.*")
+            ]
+            filepath = filedialog.askopenfilename(title="Select Image", filetypes=filetypes)
+            if filepath:
+                image_elem.image_path = filepath
+                image_elem.image_data = None
+                self._update_preview()
+                self._update_elements_list()
+
+        replace_btn.configure(command=replace_image)
+
     def _delete_selected_element(self):
         """Delete the selected element"""
         if not self.selected_element:
@@ -1547,6 +2269,8 @@ A5 booklet with pages in order.
 
         if elem_type == 'shape' and idx < len(page.shape_elements):
             page.shape_elements.pop(idx)
+        elif elem_type == 'image' and idx < len(page.image_elements):
+            page.image_elements.pop(idx)
         elif elem_type == 'text' and idx < len(page.text_elements):
             page.text_elements.pop(idx)
 
